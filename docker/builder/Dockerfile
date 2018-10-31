@@ -106,6 +106,7 @@ RUN set -xe \
     && addgroup -g 1000 builder \
     && adduser -u 1000 -G builder -s /bin/bash -D builder
 
-#USER builder
+ADD --chown=builder:builder files /files
+USER builder
 
 WORKDIR /home/builder

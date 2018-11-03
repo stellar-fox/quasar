@@ -10,7 +10,7 @@ docker
 ### builder
 Builds the native application using cordova.  
 ```bash
-$ cd docker/builder
+$ cd docker/images/builder
 $ ./build.sh
 $ ./run.sh workspace_path input_project output_project
 ```
@@ -21,7 +21,7 @@ $ ./run.sh workspace_path input_project output_project
 ### cygnus
 Runs cygnus in the container
 ```bash
-$ cd docker/cygnus  
+$ cd docker/images/cygnus  
 $ ./build.sh  
 $ ./run.sh config_path/config_to_be_used  
 ```
@@ -29,7 +29,7 @@ $ ./run.sh config_path/config_to_be_used
 ### deneb-db
 Runs deneb database in the container
 ```bash
-$ cd docker/deneb-db
+$ cd docker/images/deneb-db
 $ ./build.sh
 $ ./run.sh path_to_postgres_data
 ```

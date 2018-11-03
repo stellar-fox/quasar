@@ -35,3 +35,39 @@ $ ./run.sh path_to_postgres_data
 ```
 * path_to_postgres_data is created on the first use
 
+## Stellar-Fox ecosystem
+Outside the repository structure, prepare the ecosystem etc subtree (data will be created on start): 
+```bash
+$ tree -L 2 stellar-fox/test
+stellar-fox/test
+├── data
+│   ├── chronograf
+│   ├── deneb-db
+│   ├── grafana
+│   ├── influxdb
+│   └── kapacitor
+└── etc
+    ├── cygnus.js
+    └── deneb.json
+```
+
+Run the ecosystem:
+```bash
+$ cd docker/compose
+$ ./start.sh
+```
+or
+
+```bash
+$ cd docker/compose
+$ ./start.sh workspace target
+```
+where:
+* workspace (default: $HOME/stellar-fox)
+* target (default: test)
+
+You will be able to access the frontend services as follows:
+* [Cygnus](http://127.0.0.1:8082) - Your bank
+* [pgAdmin 4.0](http://127.0.0.1:8084) - The postgres web clinet
+* [Chronograf](http://127.0.0.1:8888) - Containers/System monitoring dashboard
+* [Grafana](http://127.0.0.1:8081) - Monitoring tool

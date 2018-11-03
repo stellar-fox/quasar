@@ -25,3 +25,13 @@ $ cd docker/cygnus
 $ ./build.sh  
 $ ./run.sh config_path/config_to_be_used  
 ```
+
+### deneb-db
+Runs deneb database in the container
+```bash
+$ cd docker/deneb-db
+$ ./build.sh
+$ ./run.sh path_to_postgres_data
+```
+* path_to_postgres_data is created on the first use
+

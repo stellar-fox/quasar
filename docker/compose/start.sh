@@ -28,10 +28,11 @@ chmod a+w $LOG_ROOT/fluentd
 # Influx as backend of the logging must be started first
 docker-compose up -d influxdb
 sleep 5
-curl -POST 'http://localhost:8086/query' --data-urlencode "q=CREATE DATABASE fluentd"
+curl -POST 'http://localhost:8086/query' --data-urlencode "q=CREATE DATABASE logs_collector"
 
 # Fluentd must connect to influx before the other services start to log to it
 docker-compose up -d fluentd
+sleep 2
 
 # The rest is starting
 docker-compose up -d

@@ -5,6 +5,7 @@ export WORKSPACE=$STELLAR_ROOT/$TARGET
 export SENSITIVE_CONFIG_ROOT=$WORKSPACE/etc
 export CONFIG_ROOT=../etc
 export DATA_ROOT=$WORKSPACE/data
+export LOG_ROOT=$WORKSPACE/log
 export USER_ME=$(id -u)
 export GROUP_ME=$(id -g)
 
@@ -21,4 +22,16 @@ chmod a+w $DATA_ROOT/kapacitor
 mkdir -p ${DATA_ROOT}/stellar-core-horizon
 chmod a+w ${DATA_ROOT}/stellar-core-horizon
 
+mkdir -p $LOG_ROOT/fluentd
+chmod a+w $LOG_ROOT/fluentd
+
+# Influx as backend of the logging must be started first
+docker-compose up -d influxdb
+sleep 5
+curl -POST 'http://localhost:8086/query' --data-urlencode "q=CREATE DATABASE fluentd"
+
+# Fluentd must connect to influx before the other services start to log to it
+docker-compose up -d fluentd
+
+# The rest is starting
 docker-compose up -d

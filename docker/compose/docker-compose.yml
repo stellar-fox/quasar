@@ -44,6 +44,13 @@ services:
     # user: "${USER_ME}:${GROUP_ME}"
     command:
       - --testnet
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "tcp://127.0.0.1:24224"
+        tag: "{{.Name}}"
+    depends_on:
+      - fluentd
 
   pgadmin:
     container_name: fox_pgadmin
@@ -122,3 +129,18 @@ services:
     user: "${USER_ME}:${GROUP_ME}"
     links:
       - influxdb
+
+  fluentd:
+    container_name: fox_fluentd
+    image: fluentd:latest
+    network_mode: host
+    ports:
+      - "127.0.0.1:24224:24224"
+      - "127.0.0.1:24224:24224/udp"
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - ${CONFIG_ROOT}/fluentd:/fluentd/etc:ro
+      - ${LOG_ROOT}/fluentd:/var/log
+    depends_on:
+      - influxdb
+

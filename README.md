@@ -36,6 +36,7 @@ $ ./run.sh path_to_postgres_data
 * path_to_postgres_data is created on the first use
 
 ## Stellar-Fox ecosystem
+### Tree
 Outside the repository structure, prepare the ecosystem etc subtree (data will be created on start): 
 ```bash
 $ tree -L 2 stellar-fox/test
@@ -49,6 +50,16 @@ stellar-fox/test
 └── etc
     ├── cygnus.js
     └── deneb.json
+```
+
+### Environmental variables
+Point, where your data partition for stellar-fox will be:
+```bash
+echo "export STELLAR_HOME=$HOME/stellar-fox" >> ~/.bashrc
+```
+or if diskspace limited:
+```bash
+echo "export STELLAR_HOME=/mnt/sdb1/`whoami`/stellar-fox" >> ~/.bashrc
 ```
 
 Run the ecosystem:

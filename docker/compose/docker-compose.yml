@@ -30,6 +30,21 @@ services:
       - ${DATA_ROOT}/deneb-db:/var/lib/postgresql/data:z
     user: "${USER_ME}:${GROUP_ME}"
 
+  stellar-core-horizon:
+    container_name: fox_stellar_core_horizon
+    image: stellar/quickstart:v10-stable
+    ports:
+      - 5433:5432
+      - 8000:8000
+      - 11625:11625
+      - 11626:11626
+    volumes:
+    # - /etc/passwd:/etc/passwd:ro
+      - ${DATA_ROOT}/stellar-core-horizon:/opt/stellar"
+    # user: "${USER_ME}:${GROUP_ME}"
+    command:
+      - --testnet
+
   pgadmin:
     container_name: fox_pgadmin
     image: dpage/pgadmin4:3.5
@@ -40,6 +55,7 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=password
     links:
       - deneb-db
+      - stellar-core-horizon
 
   influxdb:
     container_name: fox_influxdb

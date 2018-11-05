@@ -15,7 +15,7 @@ services:
     depends_on:
       - fluentd
 
-  deneb:  
+  deneb:
     container_name: fox_deneb
     image: deneb:latest
     volumes:
@@ -236,6 +236,42 @@ services:
     user: "${USER_ME}:${GROUP_ME}"
     links:
       - influxdb
+
+  dns:
+    container_name: fox_dns
+    image: defreitas/dns-proxy-server
+    ports:
+      - 5380:5380
+      - 53:53
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/resolv.conf:/etc/resolv.conf
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "tcp://127.0.0.1:24224"
+        tag: "{{.Name}}"
+    depends_on:
+      - fluentd
+
+  nginx:
+    container_name: fox_nginx
+    hostname: .${DOMAIN}
+    environment:
+      - HOSTNAMES="grafana.${DOMAIN},pgadmin.${DOMAIN},chronograf.${DOMAIN},cygnus.${DOMAIN}"
+    image: nginx:1.15.5-alpine
+    ports:
+      - 80:80
+    volumes:
+      - ${CONFIG_ROOT}/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ${LOG_ROOT}/nginx:/var/log/nginx
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "tcp://127.0.0.1:24224"
+        tag: "{{.Name}}"
+    depends_on:
+      - fluentd
 
   fluentd:
     container_name: fox_fluentd

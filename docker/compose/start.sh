@@ -47,6 +47,7 @@ docker-compose up -d stellar-core-db
 sleep 5
 curl -POST 'http://localhost:8086/query' --data-urlencode "q=CREATE DATABASE logs_collector"
 docker run --network="compose_default" -v ${WORKSPACE}/etc/stellar-core.cfg:/etc/stellar-core.cfg -it stellar-core:latest /bin/bash -c "stellar-core --conf /etc/stellar-core.cfg --newdb"
+docker run --network="compose_default" -it horizon:latest /bin/bash -c "horizon db init --db-url=\"dbname=horizon user=horizon password=horizon host=fox_horizon_db port=5432 sslmode=disable\""
 
 # Fluentd must connect to influx before the other services start to log to it
 docker-compose up -d fluentd

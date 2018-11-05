@@ -88,6 +88,12 @@ NOTICE:  table "upgradehistory" does not exist, skipping
 
 ```
 
+### horizon-db
+Init postgres horizon db
+```bash
+$ docker run --network="compose_default" -it horizon:latest /bin/bash -c "horizon db init --db-url=\"dbname=horizon user=horizon password=horizon host=fox_horizon_db port=5432 sslmode=disable\""
+```
+
 ## Stellar-Fox ecosystem
 ### Tree
 Outside the repository structure, prepare the ecosystem etc subtree (data will be created on start): 

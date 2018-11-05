@@ -138,6 +138,7 @@ services:
 
   stellar-core-db:
     container_name: fox_stellar_core_db
+    hostname: fox_stellar_core_db
     image: postgres:11.0-alpine
     ports:
       - 5434:5432
@@ -162,6 +163,11 @@ services:
     image: dpage/pgadmin4:3.5
     ports:
       - 8084:80
+    volumes:
+      # - /etc/passwd:/etc/passwd:ro
+      - ${DATA_ROOT}/pgadmin:/var/lib/pgadmin
+      - ${LOG_ROOT}/pgadmin:/var/log/pgadmin
+      # user: "${USER_ME}:${GROUP_ME}"
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@postgres.com
       - PGADMIN_DEFAULT_PASSWORD=password
@@ -272,6 +278,10 @@ services:
         tag: "{{.Name}}"
     depends_on:
       - fluentd
+      - pgadmin
+      - chronograf
+      - cygnus
+      - grafana
 
   fluentd:
     container_name: fox_fluentd

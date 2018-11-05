@@ -35,6 +35,59 @@ $ ./run.sh path_to_postgres_data
 ```
 * path_to_postgres_data is created on the first use
 
+### stellar-core
+Contenerization of the stellar-core
+```bash
+$ cd docker/images/stellar-core
+$ ./build.sh
+```
+Init the stellar-core-db postgres
+```bash
+$ docker run --network="compose_default" -v ${WORKSPACE}/etc/stellar-core.cfg:/etc/stellar-core.cfg -it stellar-core:latest /bin/bash -c "stellar-core --conf /etc/stellar-core.cfg --newdb"
+```
+
+### stellar-core-db
+Dockerized postgres.
+Must be initialized by stellar-core.
+```bash
+$ docker run --network="compose_default" -v ${WORKSPACE}/etc/stellar-core.cfg:/etc/stellar-core.cfg -it stellar-core:latest /bin/bash -c "stellar-core --conf /etc/stellar-core.cfg --newdb"
+2018-11-05T18:05:37.282 GAHFE [Database INFO] Connecting to: postgresql://dbname=core user=core password=******** host=fox_stellar_core_db port=5432
+2018-11-05T18:05:37.285 GAHFE [SCP INFO] LocalNode::LocalNode@GAHFE qSet: 273af2
+NOTICE:  table "accounts" does not exist, skipping
+NOTICE:  table "signers" does not exist, skipping
+NOTICE:  table "offers" does not exist, skipping
+NOTICE:  table "trustlines" does not exist, skipping
+NOTICE:  table "peers" does not exist, skipping
+NOTICE:  table "storestate" does not exist, skipping
+NOTICE:  table "pubsub" does not exist, skipping
+NOTICE:  table "ledgerheaders" does not exist, skipping
+NOTICE:  table "txhistory" does not exist, skipping
+NOTICE:  table "txfeehistory" does not exist, skipping
+NOTICE:  table "publishqueue" does not exist, skipping
+2018-11-05T18:05:38.667 GAHFE [Database INFO] Applying DB schema upgrade to version 2
+NOTICE:  table "scphistory" does not exist, skipping
+NOTICE:  table "scpquorums" does not exist, skipping
+2018-11-05T18:05:38.850 GAHFE [Database INFO] Applying DB schema upgrade to version 3
+NOTICE:  table "accountdata" does not exist, skipping
+2018-11-05T18:05:38.909 GAHFE [Database INFO] Applying DB schema upgrade to version 4
+NOTICE:  table "ban" does not exist, skipping
+2018-11-05T18:05:39.017 GAHFE [Database INFO] Applying DB schema upgrade to version 5
+2018-11-05T18:05:39.034 GAHFE [Database INFO] Applying DB schema upgrade to version 6
+2018-11-05T18:05:39.050 GAHFE [Database INFO] Applying DB schema upgrade to version 7
+NOTICE:  table "upgradehistory" does not exist, skipping
+2018-11-05T18:05:39.217 GAHFE [default INFO] * 
+2018-11-05T18:05:39.217 GAHFE [default INFO] * The database has been initialized
+2018-11-05T18:05:39.217 GAHFE [default INFO] * 
+2018-11-05T18:05:39.226 GAHFE [Ledger INFO] Established genesis ledger, closing
+2018-11-05T18:05:39.226 GAHFE [Ledger INFO] Root account seed: SDHOAMBNLGCE2MV5ZKIVZAQD3VCLGP53P3OBSBI6UN5L5XZI5TKHFQL4
+2018-11-05T18:05:39.259 GAHFE [default INFO] *
+2018-11-05T18:05:39.259 GAHFE [default INFO] * The next launch will catchup from the network afresh.
+2018-11-05T18:05:39.259 GAHFE [default INFO] *
+2018-11-05T18:05:39.259 GAHFE [default INFO] Application destructing
+2018-11-05T18:05:39.261 GAHFE [default INFO] Application destroyed
+
+```
+
 ## Stellar-Fox ecosystem
 ### Tree
 Outside the repository structure, prepare the ecosystem etc subtree (data will be created on start): 

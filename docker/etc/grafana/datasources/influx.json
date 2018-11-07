@@ -1,0 +1,19 @@
+{
+  "id": 1,
+  "orgId": 1,
+  "name": "fox_influxdb",
+  "type": "influxdb",
+  "typeLogoUrl": "public/app/plugins/datasource/influxdb/img/influxdb_logo.svg",
+  "access": "proxy",
+  "url": "http://fox_influxdb:8086",
+  "password": "",
+  "user": "",
+  "database": "logs_collector",
+  "basicAuth": false,
+  "isDefault": false,
+  "jsonData": {
+    "keepCookies": []
+  },
+  "readOnly": false
+}
+

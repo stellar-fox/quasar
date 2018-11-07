@@ -132,6 +132,23 @@ or
 $ cd docker/compose
 $ ./start.sh workspace target
 ```
+
+## Backup
+### Grafana
+#### Data sources
+Backup:
+```bash
+$ cd docker/compose
+$ curl http://admin:admin@localhost:8081/api/datasources | jq . > ../etc/grafana/datasources/datasources.json
+```
+The dumped file represents the array of the datasources.
+Some manual work to split to single datasources needs to be done as one file is per datasource and [] removed.
+
+Restore:
+```bash
+$ curl -XPOST -i http://admin:admin@localhost:8081/api/datasources --data-binary @../etc/grafana/datasources/influx.json -H "Content-Type: application/json"
+```
+
 where:
 * workspace (default: $HOME/stellar-fox)
 * target (default: test)

@@ -23,11 +23,13 @@ sudo yum list docker-ce --showduplicates | sort -r
 sudo yum install \
   docker-ce-18.06.1.ce-3.el7 \
   git \
+  ntp \
   vim \
 
 sudo curl -L "https://github.com/docker/compose/releases/download/1.23.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
+sudo systemctl start ntpd
 sudo systemctl start docker
 sudo systemctl enable docker
 sudo chkconfig docker on

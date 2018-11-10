@@ -4,7 +4,7 @@ upstream backend-pgadmin {
 
 server {
   listen *:80;
-  server_name  pgadmin.test.intranet.stellar-fox.net;
+  server_name  pgadmin.FULLY_QUALIFIED_DOMAIN_NAME;
   access_log   /var/log/nginx/access_pgadmin.log main;
   location / {
      proxy_pass http://backend-pgadmin;

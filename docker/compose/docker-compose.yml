@@ -40,9 +40,7 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=aquila
     volumes:
-      - /etc/passwd:/etc/passwd:ro
       - ${DATA_ROOT}/deneb-db:/var/lib/postgresql/data:z
-    user: "${USER_ME}:${GROUP_ME}"
     logging:
       driver: fluentd
       options:
@@ -51,33 +49,33 @@ services:
     depends_on:
       - fluentd
 
-  stellar-core-horizon:
-    container_name: fox_stellar_core_horizon
-    image: stellar/quickstart:v10-stable
-    ports:
-      - 5433:5432
-      - 8000:8000
-    volumes:
-    # - /etc/passwd:/etc/passwd:ro
-      - ${DATA_ROOT}/stellar-core-horizon:/opt/stellar"
-    # user: "${USER_ME}:${GROUP_ME}"
-    command:
-      - --testnet
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
+#  stellar-core-horizon:
+#    container_name: fox_stellar_core_horizon
+#    image: stellar/quickstart:v10-stable
+#    ports:
+#      - 5433:5432
+#      - 8000:8000
+#    volumes:
+#    # - /etc/passwd:/etc/passwd:ro
+#      - ${DATA_ROOT}/stellar-core-horizon:/opt/stellar"
+#    # user: "${USER_ME}:${GROUP_ME}"
+#    command:
+#      - --testnet
+#    logging:
+#      driver: fluentd
+#      options:
+#        fluentd-address: "tcp://127.0.0.1:24224"
+#        tag: "{{.Name}}"
+#    depends_on:
+#      - fluentd
 
   horizon:
     container_name: fox_horizon
-    image: horizon:latest
+    image: stellarfox/horizon:ubuntu-18.04-v0.14.2 
     environment:
-      - DATABASE_URL=postgres://horizon:horizon@fox_horizon_db:5435/horizon
-      - STELLAR_CORE_DATABASE_URL=postgres://core:core@fox_stellar_core_db/core
-      - STELLAR_CORE_URL=http://localhost:11626
+      - DATABASE_URL="dbname=horizon user=horizon password=horizon host=fox_horizon_db port=5432 sslmode=disable"
+      - STELLAR_CORE_DATABASE_URL="host=fox_stellar_core_db port=5432 user=core password=core sslmode=disable"
+      - STELLAR_CORE_URL="host=fox_stellar_core port=11626"
       - LOG_LEVEL=debug
       - PER_HOUR_RATE_LIMIT=72000
       - NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
@@ -104,9 +102,7 @@ services:
       - POSTGRES_PASSWORD=horizon
       - POSTGRES_USER=horizon
     volumes:
-      - /etc/passwd:/etc/passwd:ro
       - ${DATA_ROOT}/horizon-db:/var/lib/postgresql/data:z
-    user: "${USER_ME}:${GROUP_ME}"
     logging:
       driver: fluentd
       options:
@@ -117,7 +113,9 @@ services:
 
   stellar-core:
     container_name: fox_stellar_core
-    image: stellar-core:latest
+    image: stellarfox/stellar-core:alpine-3.8-v10.0.0 
+    environment:
+      - INGEST="true"
     ports:
       - 11626:11626
     volumes:
@@ -147,9 +145,7 @@ services:
       - POSTGRES_PASSWORD=core
       - POSTGRES_USER=core
     volumes:
-      - /etc/passwd:/etc/passwd:ro
       - ${DATA_ROOT}/stellar-core-db:/var/lib/postgresql/data:z
-    user: "${USER_ME}:${GROUP_ME}"
     logging:
       driver: fluentd
       options:
@@ -164,16 +160,14 @@ services:
     ports:
       - 8084:80
     volumes:
-      # - /etc/passwd:/etc/passwd:ro
       - ${DATA_ROOT}/pgadmin:/var/lib/pgadmin
       - ${LOG_ROOT}/pgadmin:/var/log/pgadmin
-      # user: "${USER_ME}:${GROUP_ME}"
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@postgres.com
       - PGADMIN_DEFAULT_PASSWORD=password
     links:
       - deneb-db
-      - stellar-core-horizon
+#      - stellar-core-horizon
       - horizon-db
       - stellar-core-db
 
@@ -264,11 +258,12 @@ services:
     container_name: fox_nginx
     hostname: .${DOMAIN}
     environment:
-      - HOSTNAMES="grafana.${DOMAIN},pgadmin.${DOMAIN},chronograf.${DOMAIN},cygnus.${DOMAIN}"
+      - HOSTNAMES="grafana.${DOMAIN},pgadmin.${DOMAIN},chronograf.${DOMAIN},cygnus.${DOMAIN},${DOMAIN}"
     image: nginx:1.15.5-alpine
     ports:
       - 80:80
     volumes:
+      - ${CONFIG_ROOT}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ${CONFIG_ROOT}/nginx/conf.d:/etc/nginx/conf.d:ro
       - ${LOG_ROOT}/nginx:/var/log/nginx
     logging:
@@ -285,7 +280,7 @@ services:
 
   fluentd:
     container_name: fox_fluentd
-    image: fluentd:latest
+    image: edoproject/fluentd-collector:latest
     network_mode: host
     ports:
       - "127.0.0.1:24224:24224"

@@ -4,7 +4,7 @@ upstream backend-chronograf {
 
 server {
   listen *:80;
-  server_name  chronograf.test.intranet.stellar-fox.net;
+  server_name  chronograf.FULLY_QUALIFIED_DOMAIN_NAME;
   access_log   /var/log/nginx/access_chronograf.log main;
   location / {
      proxy_pass http://backend-chronograf;

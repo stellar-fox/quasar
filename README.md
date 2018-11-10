@@ -3,7 +3,35 @@ Docker wrappers.
 Orchestrating.  
 
 ## prerequisities
-docker
+### centos7
+Instructions set to be able to deploy to centos7
+```bash
+sudo -s
+
+sudo yum update
+
+sudo yum install -y yum-utils \
+  device-mapper-persistent-data \
+  lvm2
+
+sudo yum-config-manager \
+  --add-repo \
+  https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum-config-manager --disable docker-ce-edge
+sudo yum list docker-ce --showduplicates | sort -r
+
+sudo yum install \
+  docker-ce-18.06.1.ce-3.el7 \
+  git \
+  vim \
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.23.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo chkconfig docker on
+```
 
 ## Docker images
 

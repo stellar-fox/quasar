@@ -4,7 +4,7 @@ upstream backend-cygnus {
 
 server {
   listen *:80;
-  server_name  cygnus.test.intranet.stellar-fox.net;
+  server_name  cygnus.FULLY_QUALIFIED_DOMAIN_NAME;
   access_log   /var/log/nginx/access_cygnus.log main;
   location / {
      proxy_pass http://backend-cygnus;

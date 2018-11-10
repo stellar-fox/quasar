@@ -72,14 +72,13 @@ services:
   horizon:
     container_name: fox_horizon
     image: stellarfox/horizon:ubuntu-18.04-v0.14.2 
-    environment:
-      - DATABASE_URL="dbname=horizon user=horizon password=horizon host=fox_horizon_db port=5432 sslmode=disable"
-      - STELLAR_CORE_DATABASE_URL="host=fox_stellar_core_db port=5432 user=core password=core sslmode=disable"
-      - STELLAR_CORE_URL="host=fox_stellar_core port=11626"
-      - LOG_LEVEL=debug
-      - PER_HOUR_RATE_LIMIT=72000
-      - NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
-    command: horizon
+    restart: always
+    command:
+      - horizon
+      - --ingest=true
+      - --db-url=dbname=horizon user=horizon password=horizon host=fox_horizon_db port=5432 sslmode=disable
+      - --stellar-core-db-url=host=stellar-core-db port=5432 user=core password=core sslmode=disable
+      - --stellar-core-url=host=fox_stellar_core port=11626 sslmode=disable
     ports:
       - 8001:8000
     links:
@@ -114,12 +113,11 @@ services:
   stellar-core:
     container_name: fox_stellar_core
     image: stellarfox/stellar-core:alpine-3.8-v10.0.0 
-    environment:
-      - INGEST="true"
     ports:
       - 11626:11626
     volumes:
       - ${SENSITIVE_CONFIG_ROOT}/stellar-core.cfg:/etc/stellar-core.cfg:ro
+      - ${DATA_ROOT}/stellar-core-history:/tmp/stellar-core/history/vs:z
     command:
       - stellar-core
       - --conf

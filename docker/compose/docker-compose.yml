@@ -198,6 +198,49 @@ services:
     depends_on:
       - fluentd
 
+  bridge:
+    container_name: fox_bridge
+    image: stellarfox/bridge:ubuntu-18.04-v0.0.31
+    restart: always
+    ports:
+      - 8006:8006
+    volumes:
+      - ${SENSITIVE_CONFIG_ROOT}/bridge.cfg:/etc/bridge.cfg:ro
+    command:
+      - bridge
+      - --config
+      - /etc/bridge.cfg
+    links:
+      - bridge-db
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "tcp://127.0.0.1:24224"
+        tag: "{{.Name}}"
+    depends_on:
+      - fluentd
+
+  bridge-db:
+    container_name: fox_bridge_db
+    hostname: fox_bridge_db
+    image: postgres:11.0-alpine
+    restart: always
+    ports:
+      - 5437:5432
+    environment:
+      - POSTGRES_DB=bridge
+      - POSTGRES_PASSWORD=bridge
+      - POSTGRES_USER=bridge
+    volumes:
+      - ${DATA_ROOT}/bridge-db:/var/lib/postgresql/data:z
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "tcp://127.0.0.1:24224"
+        tag: "{{.Name}}"
+    depends_on:
+      - fluentd
+
   pgadmin:
     container_name: fox_pgadmin
     image: dpage/pgadmin4:3.5

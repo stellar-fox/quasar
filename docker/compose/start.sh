@@ -2,6 +2,7 @@
 INIT_INFLUX_DB=TRUE
 INIT_HORIZON_DB=TRUE
 INIT_STELLAR_DB=TRUE
+INIT_FEDERATION_DB=TRUE
 
 export STELLAR_ROOT=${1:-$STELLAR_HOME}
 export TARGET=${2:-test}
@@ -50,18 +51,26 @@ sleep 2
 echo "The DBs backing core and horizon must be started before initialization"
 docker-compose up -d horizon-db
 docker-compose up -d stellar-core-db
+docker-compose up -d bridge-db
+docker-compose up -d federation-db
 sleep 5
 
 echo ${SENSITIVE_CONFIG_ROOT}
 if [ $INIT_STELLAR_DB == "TRUE" ]; then
   echo "Initializing stellar-core DB"
-  docker run --network="compose_default" --rm -v ${SENSITIVE_CONFIG_ROOT}/stellar-core.cfg:/etc/stellar-core.cfg -it stellarfox/stellar-core:alpine-3.8-v10.0.0 /bin/bash -c "cat /etc/stellar-core.cfg; stellar-core --conf /etc/stellar-core.cfg --newdb"
+  docker run --network="compose_default" --rm -it -v ${SENSITIVE_CONFIG_ROOT}/stellar-core.cfg:/etc/stellar-core.cfg stellarfox/stellar-core:alpine-3.8-v10.0.0 /bin/bash -c "cat /etc/stellar-core.cfg; stellar-core --conf /etc/stellar-core.cfg --newdb"
   sleep 1
 fi
 
 if [ $INIT_HORIZON_DB == "TRUE" ]; then
   echo "Initializing horizon DB"
   docker run --network="compose_default" --rm -it stellarfox/horizon:ubuntu-18.04-v0.14.2 /bin/bash -c "horizon db init --db-url=\"dbname=horizon user=horizon password=horizon host=fox_horizon_db port=5432 sslmode=disable\""
+  sleep 1
+fi
+
+if [ $INIT_FEDERATION_DB == "TRUE" ]; then
+  echo "Initializing federation DB"
+  docker run --network="compose_default" --rm -it -v ${SENSITIVE_CONFIG_ROOT}/bridge.cfg:/etc/bridge.cfg stellarfox/bridge:ubuntu-18.04-v0.0.31 /bin/bash -c "bridge --config /etc/bridge.cfg --migrate-db"
   sleep 1
 fi
 

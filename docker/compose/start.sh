@@ -56,11 +56,13 @@ echo ${SENSITIVE_CONFIG_ROOT}
 if [ $INIT_STELLAR_DB == "TRUE" ]; then
   echo "Initializing stellar-core DB"
   docker run --network="compose_default" --rm -v ${SENSITIVE_CONFIG_ROOT}/stellar-core.cfg:/etc/stellar-core.cfg -it stellarfox/stellar-core:alpine-3.8-v10.0.0 /bin/bash -c "cat /etc/stellar-core.cfg; stellar-core --conf /etc/stellar-core.cfg --newdb"
+  sleep 1
 fi
 
 if [ $INIT_HORIZON_DB == "TRUE" ]; then
   echo "Initializing horizon DB"
   docker run --network="compose_default" --rm -it stellarfox/horizon:ubuntu-18.04-v0.14.2 /bin/bash -c "horizon db init --db-url=\"dbname=horizon user=horizon password=horizon host=fox_horizon_db port=5432 sslmode=disable\""
+  sleep 1
 fi
 
 # The rest is starting

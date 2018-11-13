@@ -4,6 +4,7 @@ Orchestrating.
 
 ## prerequisities
 ### centos7
+#### docker
 Instructions set to be able to deploy to centos7
 ```bash
 sudo -s
@@ -33,6 +34,38 @@ sudo systemctl start ntpd
 sudo systemctl start docker
 sudo systemctl enable docker
 sudo chkconfig docker on
+```
+#### ruby
+Instructions set to be able to deploy to centos7
+```bash
+sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+curl -sSL https://get.rvm.io | sudo bash -s stable
+sudo usermod -a -G rvm `whoami`
+sudo yum install -y patch autoconf automake bison bzip2 gcc-c++ libffi-devel libtool patch readline-devel sqlite-devel zlib-devel glibc-headers glibc-devel openssl-devel
+# Exit and reenter shell
+exit
+
+rvm install ruby
+rvm use 2.5.1 --default
+rvm gemset create stellar-fox
+rvm use 2.5.1@stellar-fox --default
+gem install influxdb --version '0.6.1'
+```
+Instructions set to be able to deploy to ubuntu 18.04
+```bash
+sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7FCC7D46ACCC4CF8
+curl -sSL https://get.rvm.io | sudo bash -s stable
+sudo usermod -a -G rvm `whoami`
+sudo apt-get update
+# Exit and reenter shell
+exit
+
+rvm install ruby
+rvm use 2.5.1 --default
+rvm gemset create stellar-fox
+rvm use 2.5.1@stellar-fox --default
+gem install influxdb --version '0.6.1'
 ```
 
 ## Docker images

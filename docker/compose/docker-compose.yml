@@ -3,17 +3,11 @@ services:
   cygnus:
     container_name: fox_cygnus
     image: cygnus:latest
+    restart: always
     ports:
       - 8082:3000
     volumes:
       - ${SENSITIVE_CONFIG_ROOT}/cygnus.js:/cygnus/src/config.js
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
 
   deneb:
     container_name: fox_deneb
@@ -22,17 +16,11 @@ services:
       - ${SENSITIVE_CONFIG_ROOT}/deneb.json:/deneb/src/config/configuration.json
     links:
       - deneb-db
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
 
   deneb-db:
     container_name: fox_deneb_db
     image: deneb-db:latest
+    restart: always
     ports:
       - 5432:5432
     environment:
@@ -41,33 +29,6 @@ services:
       - POSTGRES_USER=aquila
     volumes:
       - ${DATA_ROOT}/deneb-db:/var/lib/postgresql/data:z
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
-
-#  stellar-core-horizon:
-#    container_name: fox_stellar_core_horizon
-#    image: stellar/quickstart:v10-stable
-#    ports:
-#      - 5433:5432
-#      - 8000:8000
-#    volumes:
-#    # - /etc/passwd:/etc/passwd:ro
-#      - ${DATA_ROOT}/stellar-core-horizon:/opt/stellar"
-#    # user: "${USER_ME}:${GROUP_ME}"
-#    command:
-#      - --testnet
-#    logging:
-#      driver: fluentd
-#      options:
-#        fluentd-address: "tcp://127.0.0.1:24224"
-#        tag: "{{.Name}}"
-#    depends_on:
-#      - fluentd
 
   horizon:
     container_name: fox_horizon
@@ -83,13 +44,6 @@ services:
       - 8001:8000
     links:
       - horizon-db
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
 
   horizon-db:
     container_name: fox_horizon_db
@@ -103,13 +57,6 @@ services:
       - POSTGRES_USER=horizon
     volumes:
       - ${DATA_ROOT}/horizon-db:/var/lib/postgresql/data:z
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
 
   stellar-core:
     container_name: fox_stellar_core
@@ -126,13 +73,6 @@ services:
       - /etc/stellar-core.cfg
     links:
       - stellar-core-db
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
 
   stellar-core-db:
     container_name: fox_stellar_core_db
@@ -147,13 +87,6 @@ services:
       - POSTGRES_USER=core
     volumes:
       - ${DATA_ROOT}/stellar-core-db:/var/lib/postgresql/data:z
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
 
   federation:
     container_name: fox_federation
@@ -169,13 +102,6 @@ services:
       - /etc/federation.cfg
     links:
       - federation-db
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
 
   federation-db:
     container_name: fox_federation_db
@@ -190,13 +116,6 @@ services:
       - POSTGRES_USER=federation
     volumes:
       - ${DATA_ROOT}/federation-db:/var/lib/postgresql/data:z
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
 
   bridge:
     container_name: fox_bridge
@@ -212,13 +131,6 @@ services:
       - /etc/bridge.cfg
     links:
       - bridge-db
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
 
   bridge-db:
     container_name: fox_bridge_db
@@ -233,17 +145,11 @@ services:
       - POSTGRES_USER=bridge
     volumes:
       - ${DATA_ROOT}/bridge-db:/var/lib/postgresql/data:z
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
 
   pgadmin:
     container_name: fox_pgadmin
     image: dpage/pgadmin4:3.5
+    restart: always
     ports:
       - 8084:80
     volumes:
@@ -261,6 +167,7 @@ services:
   influxdb:
     container_name: fox_influxdb
     image: influxdb:1.5.4-alpine
+    restart: always
     ports:
       - 8086:8086
       - 8089:8089
@@ -274,6 +181,7 @@ services:
   chronograf:
     container_name: fox_chronograf
     image: chronograf:1.5.0-alpine
+    restart: always
     ports:
       - 8888:8888
     volumes:
@@ -288,6 +196,7 @@ services:
   telegraf:
     container_name: fox_telegraf
     image: telegraf:1.6.4-alpine
+    restart: always
     volumes:
       - ${CONFIG_ROOT}/telegraf:/etc/telegraf:ro
       - /var/run:/var/run:ro
@@ -297,6 +206,7 @@ services:
   kapacitor:
     container_name: fox_kapacitor
     image: kapacitor:1.5.1-alpine
+    restart: always
     ports:
       - 9092:9092
     volumes:
@@ -310,6 +220,7 @@ services:
   grafana:
     container_name: fox_grafana
     image: grafana/grafana:5.3.2 
+    restart: always
     environment:
       - FORCE_HOSTNAME=fox_grafana
       - INFLUXDB_HOST=fox_influxdb
@@ -327,23 +238,18 @@ services:
   dns:
     container_name: fox_dns
     image: defreitas/dns-proxy-server
+    restart: always
     ports:
       - 5380:5380
       - 53:53
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/resolv.conf:/etc/resolv.conf
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
-    depends_on:
-      - fluentd
 
   nginx:
     container_name: fox_nginx
     hostname: .${DOMAIN}
+    restart: always
     environment:
       - HOSTNAMES="grafana.${DOMAIN},pgadmin.${DOMAIN},chronograf.${DOMAIN},cygnus.${DOMAIN},${DOMAIN}"
     image: nginx:1.15.5-alpine
@@ -353,13 +259,7 @@ services:
       - ${CONFIG_ROOT}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ${CONFIG_ROOT}/nginx/conf.d:/etc/nginx/conf.d:ro
       - ${LOG_ROOT}/nginx:/var/log/nginx
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "tcp://127.0.0.1:24224"
-        tag: "{{.Name}}"
     depends_on:
-      - fluentd
       - pgadmin
       - chronograf
       - cygnus
@@ -368,6 +268,7 @@ services:
   fluentd:
     container_name: fox_fluentd
     image: edoproject/fluentd-collector:latest
+    restart: always
     network_mode: host
     ports:
       - "127.0.0.1:24224:24224"

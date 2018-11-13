@@ -74,7 +74,14 @@ if [ $INIT_FEDERATION_DB == "TRUE" ]; then
   sleep 1
 fi
 
+cd ../..
+rake quasar:layer:logging:fluentd
+cd docker/compose
+
 # The rest is starting
-docker-compose up -d
+docker-compose \
+  -f docker-compose.yml \
+  -f logging_fluentd.yml \
+  up -d
 
 docker ps

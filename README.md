@@ -58,7 +58,7 @@ sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A17031138
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7FCC7D46ACCC4CF8
 curl -sSL https://get.rvm.io | sudo bash -s stable
 sudo usermod -a -G rvm `whoami`
-sudo apt-get update
+echo "source /etc/profile.d/rvm.sh" >> ~/.bashrc
 # Exit and reenter shell
 exit
 

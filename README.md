@@ -50,6 +50,7 @@ rvm use 2.5.1 --default
 rvm gemset create stellar-fox
 rvm use 2.5.1@stellar-fox --default
 gem install influxdb --version '0.6.1'
+gem install rubysl-open3 --version '2.0.0'
 ```
 Instructions set to be able to deploy to ubuntu 18.04
 ```bash
@@ -66,6 +67,7 @@ rvm use 2.5.1 --default
 rvm gemset create stellar-fox
 rvm use 2.5.1@stellar-fox --default
 gem install influxdb --version '0.6.1'
+gem install rubysl-open3 --version '2.0.0'
 ```
 
 ## Docker images

@@ -1,5 +1,6 @@
 require 'influxdb'
 require 'yaml'
+require 'open3'
 require_relative '../lib/utils.rb'
 
 namespace :influxdb do
@@ -10,9 +11,8 @@ namespace :influxdb do
     system(config, cmd)
     
     cmd = "docker-compose -f #{config['QUASAR_ROOT']}/docker/compose/docker-compose.yml config"
-    output_config = %x(docker-compose -f #{config['QUASAR_ROOT']}/docker/compose/docker-compose.yml config)
-    influx_config_part = ''
-    puts YAML.dump({'influxdb' => YAML.load(output_config)['services']['influxdb']})
+    stdout_str, stderr_str, status = Open3.capture3(config, cmd)
+    puts YAML.dump({'influxdb' => YAML.load(stdout_str)['services']['influxdb']})
     sleep(1)
 
     database    = 'logs_collector'

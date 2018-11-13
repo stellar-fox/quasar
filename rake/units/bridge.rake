@@ -2,8 +2,8 @@ require 'yaml'
 require 'open3'
 require_relative '../lib/utils.rb'
 
-namespace :horizon do
-  desc 'Initialize the Horizon DB'
+namespace :bridge do
+  desc 'Initialize the Bridge DB'
   task :init do
     config = ConfigDirectories.new.get()
     puts config
@@ -15,7 +15,7 @@ namespace :horizon do
     system(config, cmd)
     sleep(2)
 
-    cmd = "docker-compose -f #{config['QUASAR_ROOT']}/docker/compose/docker-compose.yml up -d horizon-db"
+    cmd = "docker-compose -f #{config['QUASAR_ROOT']}/docker/compose/docker-compose.yml up -d bridge-db"
     system(config, cmd)
 
     cmd = "docker-compose -f #{config['QUASAR_ROOT']}/docker/compose/docker-compose.yml config"
@@ -23,16 +23,16 @@ namespace :horizon do
 
     puts YAML.dump(
       {
-        'horizon' => YAML.load(stdout_str)['services']['horizon'],
-        'horizon-db' => YAML.load(stdout_str)['services']['horizon-db']
+        'bridge' => YAML.load(stdout_str)['services']['bridge'],
+        'bridge-db' => YAML.load(stdout_str)['services']['bridge-db']
       })
     sleep(2)
 
-    cmd = "docker-compose -f #{config['QUASAR_ROOT']}/docker/compose/docker-compose.yml run horizon /bin/bash -c \"horizon db init --db-url=\\\"dbname=horizon user=horizon password=horizon host=fox_horizon_db port=5432 sslmode=disable\\\"\""
+    cmd = "docker-compose -f #{config['QUASAR_ROOT']}/docker/compose/docker-compose.yml run bridge /bin/bash -c \"bridge --config /etc/bridge.cfg --migrate-db\""
     puts cmd
     system(config, cmd) 
 
-    cmd = "docker-compose -f #{config['QUASAR_ROOT']}/docker/compose/docker-compose.yml stop horizon-db"
+    cmd = "docker-compose -f #{config['QUASAR_ROOT']}/docker/compose/docker-compose.yml stop bridge-db"
     system(config, cmd)
 
     # Until the logging layer not separated to docker-compose.logging-fluentd, those two need to be stopped in reversed order

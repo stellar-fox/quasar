@@ -1,0 +1,33 @@
+{
+  "name": "quasar",
+  "version": "0.0.1",
+  "description": "Orchiestrator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stellar-fox/quasar.git"
+  },
+  "keywords": [
+    "quasar",
+    "qrchiestrator",
+    "docker",
+    "compose",
+    "stellar"
+  ],
+  "author": "Grzegorz Szadkowski",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stellar-fox/quasar/issues"
+  },
+  "homepage": "https://github.com/stellar-fox/quasar#readme",
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-help": "^1.6.1",
+    "gulp-hub": "^0.8.0",
+    "gulp-shell": "^0.6.5"
+  },
+  "dependencies": {}
+}

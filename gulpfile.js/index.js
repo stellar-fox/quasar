@@ -1,5 +1,5 @@
-var gulp = require('gulp');
-var HubRegistry = require('gulp-hub');
-var hub = HubRegistry(['./tasks/*js']);
+const gulp = require('gulp');
+const HubRegistry = require('gulp-hub');
+const hub = HubRegistry(['./tasks/*.js', './units/*.js']);
 
 gulp.registry(hub);

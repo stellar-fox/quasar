@@ -1,5 +1,5 @@
-let gulp = require('gulp')
-let shell = require('gulp-shell')
+const gulp = require('gulp')
+const shell = require('gulp-shell')
 
 // Kill running containers
 gulp.task('docker_check', shell.task('which docker && docker --version && docker-compose --version'))

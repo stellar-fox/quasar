@@ -1,22 +1,23 @@
-let gulp = require('gulp')
-let config = require('../lib/utils').cfg()
-let Influx = require('influx')
-let child_process = require("child_process");
-let mkdirp = require('mkdirp');
-let yaml = require('js-yaml');
+const gulp = require('gulp')
+const config = require('../lib/utils').cfg()
+const Influx = require('influx')
+const child_process = require("child_process");
+const mkdirp = require('mkdirp');
+const yaml = require('js-yaml');
 const { series } = require('gulp');
+const request = require('request');
+wait = require('gulp-wait')
 
 function influxdb_up(cb) {
     cmd = "docker-compose -f " + config['QUASAR_ROOT'] + "/docker/compose/docker-compose.yml up -d influxdb"
     child_process.execSync(cmd, {'env': config}).toString()
-    //console.log(a)
-    cb()
+    // Lets give it some time to spawn it
+    setTimeout(cb, 2000)
 }
 
 function influxdb_rm(cb) {
     cmd = "docker-compose -f " + config['QUASAR_ROOT'] + "/docker/compose/docker-compose.yml rm influxdb"
     child_process.execSync(cmd, {'env': config}).toString()
-    //console.log(a)
     cb()
 }
 
@@ -34,6 +35,7 @@ function influxdb_init(cb) {
         host: 'localhost',
         port: 8086
     })
+
     influx.getDatabaseNames()
     .then(names => {
       if (!names.includes('logs_collector')) {

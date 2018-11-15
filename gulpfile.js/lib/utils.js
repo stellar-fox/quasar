@@ -1,5 +1,5 @@
-let checkEnv = require('check-env');
-let appRoot = require('app-root-path');
+const checkEnv = require('check-env');
+const appRoot = require('app-root-path');
 
 module.exports = {
     cfg: function() {

@@ -1,5 +1,5 @@
-var gulp = require('gulp')
-const shell = require('gulp-shell')
+let gulp = require('gulp')
+let shell = require('gulp-shell')
 
 // Kill running containers
 gulp.task('docker_check', shell.task('which docker && docker --version && docker-compose --version'))
@@ -8,7 +8,7 @@ gulp.task('docker_check', shell.task('which docker && docker --version && docker
 gulp.task('kill_containers', shell.task('docker kill $(docker ps -q) || echo "no running containers to kill"'))
 
 // Remove all containers
-gulp.task('remove_containers', shell.task('docker rm -f $(docker ps -qa) || "no containers to remove"'))
+gulp.task('remove_containers', shell.task('docker rm -f $(docker ps -qa) || echo "no containers to remove"'))
 
 // Remove dangling images
 gulp.task('remove_dangling_images', shell.task('docker rmi $(docker images --filter dangling=true -q) || echo "no dangling images to remove"'))

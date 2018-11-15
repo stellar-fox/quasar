@@ -14,7 +14,7 @@ namespace :docker do
 
   desc 'Remove all containers'
   task :remove_containers do
-    sh 'docker rm -f $(docker ps -qa) || "no containers to remove"'
+    sh 'docker rm -f $(docker ps -qa) || echo "no containers to remove"'
   end
 
   desc 'Remove dangling images' 

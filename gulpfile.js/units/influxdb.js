@@ -6,7 +6,6 @@ const mkdirp = require('mkdirp');
 const yaml = require('js-yaml');
 const { series } = require('gulp');
 const request = require('request');
-wait = require('gulp-wait')
 
 function influxdb_up(cb) {
     cmd = "docker-compose -f " + config['QUASAR_ROOT'] + "/docker/compose/docker-compose.yml up -d influxdb"

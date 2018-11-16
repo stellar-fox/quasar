@@ -4,6 +4,12 @@ const shell = require('gulp-shell')
 // Kill running containers
 gulp.task('docker_check', shell.task('which docker && docker --version && docker-compose --version'))
 
+// Status running containers
+gulp.task('docker_containers_status_running', shell.task('docker ps | (read -r; printf "%s\n" "$REPLY"; sort -k 1 )'))
+
+// Status all containers
+gulp.task('docker_containers_status_all', shell.task('docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.RunningFor}}\t{{.Ports}}\t{{.Image}}\t{{.ID}}" | (read -r; printf "%s\n" "$REPLY"; sort -k 1 )'))
+
 // Kill running containers
 gulp.task('docker_containers_kill', shell.task('docker kill $(docker ps -q) || echo "no running containers to kill"'))
 
@@ -21,12 +27,6 @@ gulp.task('docker_volumes_remove_dangling', shell.task('docker volume rm $(docke
 
 // Remove all unused networks
 gulp.task('docker_network_prune', shell.task('docker network prune -f || echo "no networks to be pruned"'))
-
-// Status running containers
-gulp.task('docker_containers_status_running', shell.task('docker ps | (read -r; printf "%s\n" "$REPLY"; sort -k 1 )'))
-
-// Status all containers
-gulp.task('docker_containers_status_all', shell.task('docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.RunningFor}}\t{{.Ports}}\t{{.Image}}\t{{.ID}}" | (read -r; printf "%s\n" "$REPLY"; sort -k 1 )'))
 
 // Show container mounts
 gulp.task('docker_mounts_status', shell.task('docker ps --format  "table {{.Names}}\t{{.Mounts}}" | (read -r; printf "%s\n" "$REPLY"; sort -k 1 )'))

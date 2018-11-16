@@ -6,23 +6,26 @@ const mkdirp = require('mkdirp');
 const yaml = require('js-yaml');
 const { series } = require('gulp');
 
+const docker_compose_cmd = "docker-compose -f " + config['QUASAR_ROOT']
+    + "/docker/compose/docker-compose.yml "
+
 function influxdb_up(cb) {
-    cmd = "docker-compose -f " + config['QUASAR_ROOT'] + "/docker/compose/docker-compose.yml up -d influxdb"
+    const cmd = docker_compose_cmd + "up -d influxdb"
     child_process.execSync(cmd, {'env': config}).toString()
     // Lets give it some time to spawn it
     setTimeout(cb, 2000)
 }
 
 function influxdb_rm(cb) {
-    cmd = "docker-compose -f " + config['QUASAR_ROOT'] + "/docker/compose/docker-compose.yml rm influxdb"
+    const cmd = docker_compose_cmd + "rm influxdb"
     child_process.execSync(cmd, {'env': config}).toString()
     cb()
 }
 
 function influxdb_config_show(cb) {
-    cmd = "docker-compose -f " + config['QUASAR_ROOT'] + "/docker/compose/docker-compose.yml config"
-    a = child_process.execSync(cmd, {'env': config}).toString()
-    b = yaml.safeDump({ 'influxdb': yaml.safeLoad(a)['services']['influxdb'] })
+    const cmd = docker_compose_cmd + " config"
+    const a = child_process.execSync(cmd, {'env': config}).toString()
+    const b = yaml.safeDump({ 'influxdb': yaml.safeLoad(a)['services']['influxdb'] })
     console.log(b)
     cb()
 }

@@ -5,7 +5,6 @@ const child_process = require("child_process");
 const mkdirp = require('mkdirp');
 const yaml = require('js-yaml');
 const { series } = require('gulp');
-const request = require('request');
 
 function influxdb_up(cb) {
     cmd = "docker-compose -f " + config['QUASAR_ROOT'] + "/docker/compose/docker-compose.yml up -d influxdb"
@@ -20,7 +19,7 @@ function influxdb_rm(cb) {
     cb()
 }
 
-function influxdb_config(cb) {
+function influxdb_config_show(cb) {
     cmd = "docker-compose -f " + config['QUASAR_ROOT'] + "/docker/compose/docker-compose.yml config"
     a = child_process.execSync(cmd, {'env': config}).toString()
     b = yaml.safeDump({ 'influxdb': yaml.safeLoad(a)['services']['influxdb'] })
@@ -51,5 +50,5 @@ function influxdb_dir(cb) {
     cb();
 }
 
-gulp.task('bla', influxdb_config)
-gulp.task('influx_init', series(influxdb_config, influxdb_dir, influxdb_up, influxdb_init, influxdb_rm))
+gulp.task('influx_config_show', influxdb_config_show)
+gulp.task('influx_init', series(influxdb_config_show, influxdb_dir, influxdb_up, influxdb_init, influxdb_rm))

@@ -24,6 +24,7 @@
     },
     "description": "Orchestrator",
     "devDependencies": {
+        "babel-eslint": "^10.0.1",
         "eslint": "^5.9.0",
         "rimraf": "^2.6.2"
     },

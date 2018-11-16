@@ -2,7 +2,7 @@ const
     gulp = require("gulp"),
     shell = require("gulp-shell"),
     { string } = require("@xcmats/js-toolbox"),
-    sort_cmd = "(read -r; printf " + string.quote("%s\n") + " " + string.quote("$REPLY") + "; sort -k 1 )"
+    sort_cmd = "(read -r; printf " + string.quote("%s\n") + " " + string.quote("$REPLY") + "; sort -k 1 )",
     printout_format
         = string.quote("table {{.Names}}\t{{.Status}}\t{{.RunningFor}}\t{{.Ports}}\t{{.Image}}\t{{.ID}}")
 // ...
@@ -65,4 +65,4 @@ gulp.task("docker_clean",
         "docker_images_remove_dangling",
         "docker_volumes_remove_dangling",
         "docker_network_prune"
-        ))
+    ))

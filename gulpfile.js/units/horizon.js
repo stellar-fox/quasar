@@ -5,6 +5,7 @@ const
     mkdirp = require("mkdirp"),
     yaml = require("js-yaml"),
     { series } = require("gulp"),
+    { string } = require("@xcmats/js-toolbox"),
     compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`
 
 
@@ -15,7 +16,7 @@ function horizon_db_up (cb) {
     const cmd = `${compose_cmd} up -d horizon-db`
     child_process.execSync(cmd, {"env": config}).toString()
     // Lets give it some time to spawn it
-    setTimeout(cb, 4000)
+    setTimeout(cb, 5000)
 }
 
 
@@ -35,19 +36,16 @@ function horizon_db_rm (cb) {
 // ...
 function horizon_db_init (cb) {
     const
-        /* db_params = string.quote(string.quote([
+        db_params = string.wrap([
             "dbname=horizon",
             "user=horizon",
             "password=horizon",
-            "host=fox",
-            "horizon_db",
+            "host=fox_horizon_db",
             "port=5432",
             "sslmode=disable",
-        ].join(string.space()))),
+        ].join(string.space()), "\\\"", "\\\""),
         init_cmd = string.quote(`horizon db init --db-url=${db_params}`),
-        cmd = `${compose_cmd} run --rm  horizon /bin/bash -c ${init_cmd}`, */
-        cmd = `${compose_cmd} run --rm  horizon /bin/bash -c `
-            + "\"horizon db init --db-url=\\\"dbname=horizon user=horizon password=horizon host=fox_horizon_db port=5432 sslmode=disable\\\"\"",
+        cmd = `${compose_cmd} run --rm  horizon /bin/bash -c ${init_cmd}`,
         a = child_process.execSync(cmd, {
             env: { PATH: process.env.PATH, ...config },
         }).toString()

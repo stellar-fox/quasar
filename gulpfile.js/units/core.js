@@ -36,7 +36,7 @@ function core_db_up (cb) {
     const cmd = `${docker_compose_cmd_prefix} up -d stellar-core-db`
     child_process.execSync(cmd, {"env": config}).toString()
     // Lets give it some time to spawn it
-    setTimeout(cb, 4000)
+    setTimeout(cb, 5000)
 }
 
 
@@ -55,9 +55,9 @@ function core_db_rm (cb) {
 
 // ...
 function core_db_init (cb) {
-    const 
-        cmd = `${docker_compose_cmd_prefix} run --rm  stellar-core /bin/bash -c `
-            + string.quote("stellar-core --conf /etc/stellar-core.cfg --newdb"),
+    const
+        init_cmd = string.quote("stellar-core --conf /etc/stellar-core.cfg --newdb"),
+        cmd = `${docker_compose_cmd_prefix} run --rm  stellar-core /bin/bash -c ${init_cmd}`,
         a = child_process.execSync(cmd, {
             env: { PATH: process.env.PATH, ...config },
         }).toString()

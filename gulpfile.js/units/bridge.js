@@ -36,7 +36,7 @@ function bridge_db_up (cb) {
 
     child_process.execSync(cmd, { env: config }).toString()
     // Lets give it some time to spawn it
-    setTimeout(cb, 4000)
+    setTimeout(cb, 5000)
 }
 
 
@@ -90,8 +90,8 @@ function bridge_config_show (cb) {
 
 // ...
 function bridge_dir (cb) {
-    mkdirp(config.DATA_ROOT + "/bridge/history")
-    mkdirp(config.DATA_ROOT + "/bridge-db")
+    mkdirp(`${config["DATA_ROOT"]}/bridge/history`)
+    mkdirp(`${config["DATA_ROOT"]}/bridge-db`)
     cb()
 }
 

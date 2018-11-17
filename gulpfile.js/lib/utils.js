@@ -27,4 +27,7 @@ module.exports = {
             "GROUP_ME": process.getegid().toString(),
         }
     },
+    deep_clone: function (dictionary) {
+        return JSON.parse(JSON.stringify(dictionary))
+    },
 }

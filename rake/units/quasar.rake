@@ -23,7 +23,7 @@ namespace :quasar do
         logging_fluentd_template = YAML.load_file(config['CONFIG_ROOT'] + '/templates/logging.fluentd.yml')
 
         # Deep copy
-        logging_layer = Hash[monitored_services.map {|service| [service, Marshal.load(Marshal.dump(logging_fluentd_template['service']))]}]
+        logging_layer = Hash[monitored_services.map {|service| [service, Marshal.load(Marshal.dump(logging_fluentd_template))]}]
         File.open(config['QUASAR_ROOT'] + '/docker/compose/logging_fluentd.yml', 'w') {|f| f.write(YAML.dump({
           'version' => '3',
           'services' => logging_layer

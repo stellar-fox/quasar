@@ -3,7 +3,6 @@ services:
   cygnus:
     container_name: fox_cygnus
     image: cygnus:latest
-    restart: always
     ports:
       - 8082:3000
     volumes:
@@ -20,7 +19,6 @@ services:
   deneb-db:
     container_name: fox_deneb_db
     image: deneb-db:latest
-    restart: always
     ports:
       - 5432:5432
     environment:
@@ -32,8 +30,7 @@ services:
 
   horizon:
     container_name: fox_horizon
-    image: stellarfox/horizon:ubuntu-18.04-v0.14.2 
-    restart: always
+    image: stellarfox/horizon:ubuntu-18.04-v0.14.2
     command:
       - horizon
       - --ingest=true
@@ -48,7 +45,6 @@ services:
   horizon-db:
     container_name: fox_horizon_db
     image: postgres:11.0-alpine
-    restart: always
     ports:
       - 5435:5432
     environment:
@@ -60,8 +56,7 @@ services:
 
   stellar-core:
     container_name: fox_stellar_core
-    image: stellarfox/stellar-core:alpine-3.8-v10.0.0 
-    restart: always
+    image: stellarfox/stellar-core:alpine-3.8-v10.0.0
     ports:
       - 11626:11626
     volumes:
@@ -78,7 +73,6 @@ services:
     container_name: fox_stellar_core_db
     hostname: fox_stellar_core_db
     image: postgres:11.0-alpine
-    restart: always
     ports:
       - 5434:5432
     environment:
@@ -91,7 +85,6 @@ services:
   federation:
     container_name: fox_federation
     image: stellarfox/federation:latest
-    restart: always
     ports:
       - 8000:8000
     volumes:
@@ -107,7 +100,6 @@ services:
     container_name: fox_federation_db
     hostname: fox_federation_db
     image: postgres:11.0-alpine
-    restart: always
     ports:
       - 5436:5432
     environment:
@@ -120,7 +112,6 @@ services:
   bridge:
     container_name: fox_bridge
     image: stellarfox/bridge:ubuntu-18.04-v0.0.31
-    restart: always
     ports:
       - 8006:8006
     volumes:
@@ -136,7 +127,6 @@ services:
     container_name: fox_bridge_db
     hostname: fox_bridge_db
     image: postgres:11.0-alpine
-    restart: always
     ports:
       - 5437:5432
     environment:
@@ -149,7 +139,6 @@ services:
   pgadmin:
     container_name: fox_pgadmin
     image: dpage/pgadmin4:3.5
-    restart: always
     ports:
       - 8084:80
     volumes:
@@ -167,7 +156,6 @@ services:
   influxdb:
     container_name: fox_influxdb
     image: influxdb:1.5.4-alpine
-    restart: always
     ports:
       - 8086:8086
       - 8089:8089
@@ -181,7 +169,6 @@ services:
   chronograf:
     container_name: fox_chronograf
     image: chronograf:1.5.0-alpine
-    restart: always
     ports:
       - 8888:8888
     volumes:
@@ -196,7 +183,6 @@ services:
   telegraf:
     container_name: fox_telegraf
     image: telegraf:1.6.4-alpine
-    restart: always
     volumes:
       - ${CONFIG_ROOT}/telegraf:/etc/telegraf:ro
       - /var/run:/var/run:ro
@@ -206,7 +192,6 @@ services:
   kapacitor:
     container_name: fox_kapacitor
     image: kapacitor:1.5.1-alpine
-    restart: always
     ports:
       - 9092:9092
     volumes:
@@ -219,8 +204,7 @@ services:
   
   grafana:
     container_name: fox_grafana
-    image: grafana/grafana:5.3.2 
-    restart: always
+    image: grafana/grafana:5.3.2
     environment:
       - FORCE_HOSTNAME=fox_grafana
       - INFLUXDB_HOST=fox_influxdb
@@ -238,7 +222,6 @@ services:
   dns:
     container_name: fox_dns
     image: defreitas/dns-proxy-server
-    restart: always
     ports:
       - 5380:5380
       - 53:53
@@ -249,7 +232,6 @@ services:
   nginx:
     container_name: fox_nginx
     hostname: .${DOMAIN}
-    restart: always
     environment:
       - HOSTNAMES="grafana.${DOMAIN},pgadmin.${DOMAIN},chronograf.${DOMAIN},cygnus.${DOMAIN},${DOMAIN}"
     image: nginx:1.15.5-alpine
@@ -268,7 +250,6 @@ services:
   fluentd:
     container_name: fox_fluentd
     image: edoproject/fluentd-collector:latest
-    restart: always
     network_mode: host
     ports:
       - "127.0.0.1:24224:24224"
@@ -279,4 +260,3 @@ services:
       - ${LOG_ROOT}/fluentd:/var/log
     depends_on:
       - influxdb
-

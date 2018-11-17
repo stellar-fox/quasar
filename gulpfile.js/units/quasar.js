@@ -7,6 +7,7 @@ const
     yaml = require("js-yaml"),
     fs = require("fs"),
     { series } = require("gulp"),
+    { string } = require("@xcmats/js-toolbox"),
     compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`
 
 
@@ -17,7 +18,14 @@ function quasar_up (cb) {
     const
         log_fluentd = (argv.log2fluentd === undefined) ? false : true,
         log_switch = log_fluentd ? `-f ${config.QUASAR_ROOT}/docker/compose/logging_fluentd.yml` : "",
-        cmd = `${compose_cmd} ${log_switch} up -d`
+        restart_always = (argv.restartalways === undefined) ? false : true,
+        restart_policy = restart_always ? `-f ${config.QUASAR_ROOT}/docker/compose/restart_policy.yml` : "",
+        cmd = [
+            compose_cmd,
+            log_switch,
+            restart_policy,
+            "up -d"
+        ].join(string.space())
     console.log(cmd)
     child_process.execSync(cmd, {
         env: { PATH: process.env.PATH, ...config },
@@ -71,7 +79,7 @@ function quasar_config_generate_logging_fluentd (cb) {
         ],
         monitored_services = [...services].filter(x => !monitoring_services.includes(x)),
         logging_fluentd_template  = yaml.safeLoad(fs.readFileSync(
-            `${config["CONFIG_ROOT"]}/templates/logging.fluentd.yml`,
+            `${config["CONFIG_ROOT"]}/templates/logging_fluentd.yml`,
             "utf8")),
         logging_layer = monitored_services.reduce(
             (d, o) => {
@@ -92,8 +100,35 @@ function quasar_config_generate_logging_fluentd (cb) {
 
 
 // ...
+function quasar_config_generate_policy_restart (cb) {
+    const
+        compose_main = yaml.safeLoad(fs.readFileSync(
+            `${config["QUASAR_ROOT"]}/docker/compose/docker-compose.yml`,
+            "utf8")),
+        services = Object.keys(compose_main["services"]),
+        restart_policy = { restart: "always" },
+        restart_policy_layer = services.reduce(
+            (d, o) => {
+                d[o] = deep_clone(restart_policy)
+                return d
+            }, {}
+        )
+    fs.writeFileSync(
+        `${config["QUASAR_ROOT"]}/docker/compose/restart_policy.yml`,
+        yaml.dump({
+            version: "3",
+            "services": restart_policy_layer
+        }))
+    cb()
+}
+
+
+
+
+// ...
 gulp.task("quasar_config_show", quasar_config_show)
 gulp.task("quasar_config_generate_logging_fluentd", quasar_config_generate_logging_fluentd)
+gulp.task("quasar_config_generate_policy_restart", quasar_config_generate_policy_restart)
 gulp.task("quasar_init", gulp.parallel(
     "influx_init",
     "core_init",

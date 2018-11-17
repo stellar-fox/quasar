@@ -47,5 +47,11 @@ function quasar_config_show (cb) {
 
 // ...
 gulp.task("quasar_config_show", quasar_config_show)
+gulp.task("quasar_init", gulp.parallel(
+    "influx_init",
+    "core_init",
+    "horizon_init",
+    "bridge_init"
+))
 gulp.task("quasar_up", series(quasar_config_show, quasar_up))
 gulp.task("quasar_down", series(quasar_config_show, quasar_down))

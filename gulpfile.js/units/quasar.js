@@ -1,5 +1,6 @@
 const
     gulp = require("gulp"),
+    argv = require('yargs').argv,
     config = require("../lib/utils").cfg(),
     deep_clone = require("../lib/utils").deep_clone,
     child_process = require("child_process"),
@@ -13,7 +14,11 @@ const
 
 // ...
 function quasar_up (cb) {
-    const cmd = `${compose_cmd} up -d`
+    const
+        log_fluentd = (argv.log2fluentd === undefined) ? false : true,
+        log_switch = log_fluentd ? `-f ${config.QUASAR_ROOT}/docker/compose/logging_fluentd.yml` : "",
+        cmd = `${compose_cmd} ${log_switch} up -d`
+    console.log(cmd)
     child_process.execSync(cmd, {
         env: { PATH: process.env.PATH, ...config },
     }).toString()
@@ -68,16 +73,18 @@ function quasar_config_generate_logging_fluentd (cb) {
         logging_fluentd_template  = yaml.safeLoad(fs.readFileSync(
             `${config["CONFIG_ROOT"]}/templates/logging.fluentd.yml`,
             "utf8")),
-        logging_layer = monitored_services.map(
-            service => {
-                let r = {}
-                r[service] = deep_clone(logging_fluentd_template)
-                return r
-            }
+        logging_layer = monitored_services.reduce(
+            (d, o) => {
+                d[o] = deep_clone(logging_fluentd_template)
+                return d
+            }, {}
         )
     fs.writeFileSync(
         `${config["QUASAR_ROOT"]}/docker/compose/logging_fluentd.yml`,
-        yaml.dump(logging_layer))
+        yaml.dump({
+            version: "3",
+            "services": logging_layer
+        }))
     cb()
 }
 

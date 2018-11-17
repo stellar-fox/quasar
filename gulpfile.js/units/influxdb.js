@@ -1,12 +1,16 @@
 const
     gulp = require("gulp"),
+    argv = require("yargs").argv,
     config = require("../lib/utils").cfg(),
     Influx = require("influx"),
     child_process = require("child_process"),
     mkdirp = require("mkdirp"),
     yaml = require("js-yaml"),
     { series } = require("gulp"),
-    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`
+    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`,
+    loglevel = (argv.loglevel === undefined) ? "info" : argv.loglevel,
+    Log = require("log"),
+    log = new Log(loglevel)
 
 
 
@@ -14,6 +18,7 @@ const
 // ...
 function influxdb_up (cb) {
     const cmd = `${compose_cmd} up -d influxdb`
+    log.info(`Command:\n${cmd}\n`)
     child_process.execSync(cmd, {"env": config}).toString()
     // Lets give it some time to spawn it
     setTimeout(cb, 2000)
@@ -25,7 +30,9 @@ function influxdb_up (cb) {
 // ...
 function influxdb_rm (cb) {
     const cmd = `${compose_cmd} rm influxdb`
-    child_process.execSync(cmd, {"env": config}).toString()
+    log.info(`Command:\n${cmd}\n`)
+    const out = child_process.execSync(cmd, {"env": config}).toString()
+    console.log(out)
     cb()
 }
 
@@ -34,8 +41,9 @@ function influxdb_rm (cb) {
 
 // ...
 function influxdb_config_show (cb) {
+    const cmd = `${compose_cmd} config`
+    log.info(`Command:\n${cmd}\n`)
     const
-        cmd = `${compose_cmd} config`,
         a = child_process.execSync(cmd, {"env": config}).toString(),
         b = yaml.safeDump({ "influxdb": yaml.safeLoad(a)["services"]["influxdb"] })
     console.log(b)
@@ -47,7 +55,6 @@ function influxdb_config_show (cb) {
 
 // ...
 function influxdb_init (cb) {
-    console.log("%j", config)
     const influx = new Influx.InfluxDB({
         host: "localhost",
         port: 8086,
@@ -60,7 +67,7 @@ function influxdb_init (cb) {
             }
         })
     influx.getDatabaseNames().then(names => {
-        console.log(names)})
+        log.debug(names)})
     cb()
 }
 

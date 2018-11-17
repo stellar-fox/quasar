@@ -1,12 +1,16 @@
 const
     gulp = require("gulp"),
+    argv = require("yargs").argv,
     config = require("../lib/utils").cfg(),
     child_process = require("child_process"),
     mkdirp = require("mkdirp"),
     yaml = require("js-yaml"),
     { series } = require("gulp"),
     { string } = require("@xcmats/js-toolbox"),
-    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`
+    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`,
+    loglevel = (argv.loglevel === undefined) ? "info" : argv.loglevel,
+    Log = require("log"),
+    log = new Log(loglevel)
 
 
 
@@ -14,6 +18,7 @@ const
 // ...
 function horizon_db_up (cb) {
     const cmd = `${compose_cmd} up -d horizon-db`
+    log.info(`Command:\n${cmd}\n`)
     child_process.execSync(cmd, {"env": config}).toString()
     // Lets give it some time to spawn it
     setTimeout(cb, 5000)
@@ -25,8 +30,9 @@ function horizon_db_up (cb) {
 // ...
 function horizon_db_rm (cb) {
     const cmd = `${compose_cmd} rm horizon-db`
-    const a = child_process.execSync(cmd, {"env": config}).toString()
-    console.log(a)
+    log.info(`Command:\n${cmd}\n`)
+    const out = child_process.execSync(cmd, {"env": config}).toString()
+    log.debug(out)
     cb()
 }
 
@@ -45,11 +51,12 @@ function horizon_db_init (cb) {
             "sslmode=disable",
         ].join(string.space()), "\\\"", "\\\""),
         init_cmd = string.quote(`horizon db init --db-url=${db_params}`),
-        cmd = `${compose_cmd} run --rm  horizon /bin/bash -c ${init_cmd}`,
-        a = child_process.execSync(cmd, {
-            env: { PATH: process.env.PATH, ...config },
-        }).toString()
-    console.log(a)
+        cmd = `${compose_cmd} run --rm  horizon /bin/bash -c ${init_cmd}`
+    log.info(`Command:\n${cmd}\n`)
+    const out = child_process.execSync(cmd, {
+        env: { PATH: process.env.PATH, ...config },
+    }).toString()
+    log.debug(out)
     cb()
 }
 
@@ -58,8 +65,9 @@ function horizon_db_init (cb) {
 
 // ...
 function horizon_config_show (cb) {
+    const cmd = `${compose_cmd} config`
+    log.info(`Command:\n${cmd}\n`)
     const
-        cmd = `${compose_cmd} config`,
         a = child_process.execSync(cmd, {"env": config}).toString(),
         b = yaml.safeDump({
             "horizon-db": yaml.safeLoad(a)["services"]["horizon-db"],

@@ -1,6 +1,6 @@
 const
     gulp = require("gulp"),
-    argv = require('yargs').argv,
+    argv = require("yargs").argv,
     config = require("../lib/utils").cfg(),
     deep_clone = require("../lib/utils").deep_clone,
     child_process = require("child_process"),
@@ -8,7 +8,12 @@ const
     fs = require("fs"),
     { series } = require("gulp"),
     { string } = require("@xcmats/js-toolbox"),
-    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`
+    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`,
+    log_fluentd = (argv.log2fluentd === undefined) ? false : true,
+    restart_always = (argv.restartalways === undefined) ? false : true,
+    loglevel = (argv.loglevel === undefined) ? "info" : argv.loglevel,
+    Log = require("log"),
+    log = new Log(loglevel)
 
 
 
@@ -16,20 +21,19 @@ const
 // ...
 function quasar_up (cb) {
     const
-        log_fluentd = (argv.log2fluentd === undefined) ? false : true,
         log_switch = log_fluentd ? `-f ${config.QUASAR_ROOT}/docker/compose/logging_fluentd.yml` : "",
-        restart_always = (argv.restartalways === undefined) ? false : true,
         restart_policy = restart_always ? `-f ${config.QUASAR_ROOT}/docker/compose/restart_policy.yml` : "",
         cmd = [
             compose_cmd,
             log_switch,
             restart_policy,
-            "up -d"
+            "up -d",
         ].join(string.space())
-    console.log(cmd)
-    child_process.execSync(cmd, {
+    log.info(`Command:\n${cmd}\n`)
+    const output = child_process.execSync(cmd, {
         env: { PATH: process.env.PATH, ...config },
     }).toString()
+    log.debug(`Output:\n${output}\n`)
     // Lets give it some time to spawn it
     setTimeout(cb, 2000)
 }
@@ -40,9 +44,11 @@ function quasar_up (cb) {
 // ...
 function quasar_down (cb) {
     const cmd = `${compose_cmd} down`
-    child_process.execSync(cmd,  {
+    log.info(`Command:\n${cmd}\n`)
+    const output = child_process.execSync(cmd,  {
         env: { PATH: process.env.PATH, ...config },
     }).toString()
+    log.debug(`Output:\n${output}\n`)
     cb()
 }
 
@@ -51,10 +57,10 @@ function quasar_down (cb) {
 
 // ...
 function quasar_config_show (cb) {
-    const
-        cmd = `${compose_cmd} config`,
-        a = child_process.execSync(cmd, {"env": config}).toString()
-    console.log(a)
+    const cmd = `${compose_cmd} config`
+    log.info(`Command:\n${cmd}\n`)
+    const out = child_process.execSync(cmd, {"env": config}).toString()
+    console.log(out)
     cb()
 }
 
@@ -91,7 +97,7 @@ function quasar_config_generate_logging_fluentd (cb) {
         `${config["QUASAR_ROOT"]}/docker/compose/logging_fluentd.yml`,
         yaml.dump({
             version: "3",
-            "services": logging_layer
+            "services": logging_layer,
         }))
     cb()
 }
@@ -117,7 +123,7 @@ function quasar_config_generate_policy_restart (cb) {
         `${config["QUASAR_ROOT"]}/docker/compose/restart_policy.yml`,
         yaml.dump({
             version: "3",
-            "services": restart_policy_layer
+            "services": restart_policy_layer,
         }))
     cb()
 }

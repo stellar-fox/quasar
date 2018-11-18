@@ -4,6 +4,7 @@ const
     config = require("../lib/utils").cfg(),
     deep_clone = require("../lib/utils").deep_clone,
     child_process = require("child_process"),
+    mkdirp = require("mkdirp"),
     yaml = require("js-yaml"),
     fs = require("fs"),
     { series } = require("gulp"),
@@ -136,9 +137,27 @@ function quasar_config_generate_policy_restart (cb) {
 
 
 // ...
+function quasar_dir_prepare (cb) {
+    const services = [
+        "chronograf",
+        "grafana",
+        "kapacitor",
+        "nginx",
+    ]
+    services.map(
+        (s) => mkdirp(`${config["DATA_ROOT"]}/${s}`)
+    )
+    cb()
+}
+
+
+
+
+// ...
 gulp.task("quasar_config_show", quasar_config_show)
 gulp.task("quasar_config_generate_logging_fluentd", quasar_config_generate_logging_fluentd)
 gulp.task("quasar_config_generate_policy_restart", quasar_config_generate_policy_restart)
+gulp.task("quasar_dir_prepare", series(quasar_dir_prepare))
 gulp.task("quasar_init", gulp.parallel(
     "influx_init",
     "core_init",
@@ -146,6 +165,7 @@ gulp.task("quasar_init", gulp.parallel(
     "horizon_init",
     "quasar_config_generate_logging_fluentd",
     "quasar_config_generate_policy_restart",
+    "quasar_dir_prepare",
 ))
 gulp.task("quasar_up", series(quasar_up))
 gulp.task("quasar_down", series(quasar_down))

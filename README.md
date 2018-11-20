@@ -1,6 +1,5 @@
 # quasar
-Docker wrappers.  
-Orchestrating.  
+Orchestrating and monitoring the stellar ecosystem.  
 
 ## prerequisities
 ### centos7
@@ -35,39 +34,12 @@ sudo systemctl start docker
 sudo systemctl enable docker
 sudo chkconfig docker on
 ```
-#### ruby
-Instructions set to be able to deploy to centos7
+#### node.js
+Installation:
 ```bash
-sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-curl -sSL https://get.rvm.io | sudo bash -s stable
-sudo usermod -a -G rvm `whoami`
-sudo yum install -y patch autoconf automake bison bzip2 gcc-c++ libffi-devel libtool patch readline-devel sqlite-devel zlib-devel glibc-headers glibc-devel openssl-devel
-# Exit and reenter shell
-exit
-
-rvm install ruby
-rvm use 2.5.1 --default
-rvm gemset create stellar-fox
-rvm use 2.5.1@stellar-fox --default
-gem install influxdb --version '0.6.1'
-gem install rubysl-open3 --version '2.0.0'
-```
-Instructions set to be able to deploy to ubuntu 18.04
-```bash
-sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7FCC7D46ACCC4CF8
-curl -sSL https://get.rvm.io | sudo bash -s stable
-sudo usermod -a -G rvm `whoami`
-echo "source /etc/profile.d/rvm.sh" >> ~/.bashrc
-# Exit and reenter shell
-exit
-
-rvm install ruby
-rvm use 2.5.1 --default
-rvm gemset create stellar-fox
-rvm use 2.5.1@stellar-fox --default
-gem install influxdb --version '0.6.1'
-gem install rubysl-open3 --version '2.0.0'
+npm --version
+sudo apt install npm
+sudo npm install -g npx
 ```
 
 ## Docker images
@@ -83,82 +55,6 @@ $ ./run.sh workspace_path input_project output_project
 * input_project the project to be wrapped  
 * output_project the name of the project to be created as a wrapper  
 
-### cygnus
-Runs cygnus in the container
-```bash
-$ cd docker/images/cygnus  
-$ ./build.sh  
-$ ./run.sh config_path/config_to_be_used  
-```
-
-### deneb-db
-Runs deneb database in the container
-```bash
-$ cd docker/images/deneb-db
-$ ./build.sh
-$ ./run.sh path_to_postgres_data
-```
-* path_to_postgres_data is created on the first use
-
-### stellar-core
-Contenerization of the stellar-core
-```bash
-$ cd docker/images/stellar-core
-$ ./build.sh
-```
-Init the stellar-core-db postgres
-```bash
-$ docker run --network="compose_default" -v ${WORKSPACE}/etc/stellar-core.cfg:/etc/stellar-core.cfg -it stellar-core:latest /bin/bash -c "stellar-core --conf /etc/stellar-core.cfg --newdb"
-```
-
-### stellar-core-db
-Dockerized postgres.
-Must be initialized by stellar-core.
-```bash
-$ docker run --network="compose_default" -v ${WORKSPACE}/etc/stellar-core.cfg:/etc/stellar-core.cfg -it stellar-core:latest /bin/bash -c "stellar-core --conf /etc/stellar-core.cfg --newdb"
-2018-11-05T18:05:37.282 GAHFE [Database INFO] Connecting to: postgresql://dbname=core user=core password=******** host=fox_stellar_core_db port=5432
-2018-11-05T18:05:37.285 GAHFE [SCP INFO] LocalNode::LocalNode@GAHFE qSet: 273af2
-NOTICE:  table "accounts" does not exist, skipping
-NOTICE:  table "signers" does not exist, skipping
-NOTICE:  table "offers" does not exist, skipping
-NOTICE:  table "trustlines" does not exist, skipping
-NOTICE:  table "peers" does not exist, skipping
-NOTICE:  table "storestate" does not exist, skipping
-NOTICE:  table "pubsub" does not exist, skipping
-NOTICE:  table "ledgerheaders" does not exist, skipping
-NOTICE:  table "txhistory" does not exist, skipping
-NOTICE:  table "txfeehistory" does not exist, skipping
-NOTICE:  table "publishqueue" does not exist, skipping
-2018-11-05T18:05:38.667 GAHFE [Database INFO] Applying DB schema upgrade to version 2
-NOTICE:  table "scphistory" does not exist, skipping
-NOTICE:  table "scpquorums" does not exist, skipping
-2018-11-05T18:05:38.850 GAHFE [Database INFO] Applying DB schema upgrade to version 3
-NOTICE:  table "accountdata" does not exist, skipping
-2018-11-05T18:05:38.909 GAHFE [Database INFO] Applying DB schema upgrade to version 4
-NOTICE:  table "ban" does not exist, skipping
-2018-11-05T18:05:39.017 GAHFE [Database INFO] Applying DB schema upgrade to version 5
-2018-11-05T18:05:39.034 GAHFE [Database INFO] Applying DB schema upgrade to version 6
-2018-11-05T18:05:39.050 GAHFE [Database INFO] Applying DB schema upgrade to version 7
-NOTICE:  table "upgradehistory" does not exist, skipping
-2018-11-05T18:05:39.217 GAHFE [default INFO] * 
-2018-11-05T18:05:39.217 GAHFE [default INFO] * The database has been initialized
-2018-11-05T18:05:39.217 GAHFE [default INFO] * 
-2018-11-05T18:05:39.226 GAHFE [Ledger INFO] Established genesis ledger, closing
-2018-11-05T18:05:39.226 GAHFE [Ledger INFO] Root account seed: SDHOAMBNLGCE2MV5ZKIVZAQD3VCLGP53P3OBSBI6UN5L5XZI5TKHFQL4
-2018-11-05T18:05:39.259 GAHFE [default INFO] *
-2018-11-05T18:05:39.259 GAHFE [default INFO] * The next launch will catchup from the network afresh.
-2018-11-05T18:05:39.259 GAHFE [default INFO] *
-2018-11-05T18:05:39.259 GAHFE [default INFO] Application destructing
-2018-11-05T18:05:39.261 GAHFE [default INFO] Application destroyed
-
-```
-
-### horizon-db
-Init postgres horizon db
-```bash
-$ docker run --network="compose_default" -it horizon:latest /bin/bash -c "horizon db init --db-url=\"dbname=horizon user=horizon password=horizon host=fox_horizon_db port=5432 sslmode=disable\""
-```
-
 ## Stellar-Fox ecosystem
 ### Tree
 Outside the repository structure, prepare the ecosystem etc subtree (data will be created on start): 
@@ -166,40 +62,123 @@ Outside the repository structure, prepare the ecosystem etc subtree (data will b
 $ tree -L 2 stellar-fox/test
 stellar-fox/test
 ├── data
-│   ├── chronograf
-│   ├── deneb-db
-│   ├── grafana
-│   ├── influxdb
-│   └── kapacitor
 └── etc
-    ├── cygnus.js
-    └── deneb.json
+    ├── bridge.cfg
+    ├── cygnus.js
+    ├── deneb.json
+    ├── federation.cfg
+    └── stellar-core.cfg
 ```
 
 ### Environmental variables
 Point, where your data partition for stellar-fox will be:
 ```bash
 echo "export STELLAR_HOME=$HOME/stellar-fox" >> ~/.bashrc
+echo "export HOSTNAME=hostname"
+echo "export DOMAIN=${HOSTNAME}.fully.gualified.domain.name"
 ```
 or if diskspace limited:
 ```bash
 echo "export STELLAR_HOME=/mnt/sdb1/`whoami`/stellar-fox" >> ~/.bashrc
+echo "export HOSTNAME=hostname"
+echo "export DOMAIN=${HOSTNAME}.fully.gualified.domain.name"
 ```
 
-Run the ecosystem:
+### Operations:
+[Gulp](https://gulpjs.com/) is used as a task manager.
+Launch quasar:
 ```bash
-$ cd docker/compose
-$ ./start.sh
+# Clone repo
+$ git clone https://github.com/stellar-fox/quasar.git
+$ cd quasar
+# Install dependencies
+$ npm i
+# Show the main tasks
+$ gulp --tasks-simple
+# Run
+$ gulp quasar_first_run
 ```
-or
+Show the chain of subtasks:
+```bash
+# Show tasks as a tree
+$ gulp -T
 
-```bash
-$ cd docker/compose
-$ ./start.sh workspace target
+...
+
+[05:08:14] └─┬ quasar_first_run
+[05:08:14]   └─┬ <series>
+[05:08:14]     ├─┬ quasar_build
+[05:08:14]     │ └─┬ <parallel>
+[05:08:14]     │   ├── cygnus_build
+[05:08:14]     │   └── deneb_build
+[05:08:14]     ├─┬ quasar_init
+[05:08:14]     │ └─┬ <parallel>
+[05:08:14]     │   ├─┬ influx_init
+[05:08:14]     │   │ └─┬ <series>
+[05:08:14]     │   │   ├── influxdb_config_show
+[05:08:14]     │   │   ├── influxdb_dir
+[05:08:14]     │   │   ├── influxdb_up
+[05:08:14]     │   │   ├── influxdb_init
+[05:08:14]     │   │   └── influxdb_rm
+[05:08:14]     │   ├─┬ core_init
+[05:08:14]     │   │ └─┬ <series>
+[05:08:14]     │   │   ├── core_config_show
+[05:08:14]     │   │   ├── core_dir
+[05:08:14]     │   │   ├── core_db_up
+[05:08:14]     │   │   ├── core_db_init
+[05:08:14]     │   │   └── core_db_rm
+[05:08:14]     │   ├─┬ bridge_init
+[05:08:14]     │   │ └─┬ <series>
+[05:08:14]     │   │   ├── bridge_config_show
+[05:08:14]     │   │   ├── bridge_dir
+[05:08:14]     │   │   ├── bridge_db_up
+[05:08:14]     │   │   ├── bridge_db_init
+[05:08:14]     │   │   └── bridge_db_rm
+[05:08:14]     │   ├─┬ horizon_init
+[05:08:14]     │   │ └─┬ <series>
+[05:08:14]     │   │   ├── horizon_config_show
+[05:08:14]     │   │   ├── horizon_dir
+[05:08:14]     │   │   ├── horizon_db_up
+[05:08:14]     │   │   ├── horizon_db_init
+[05:08:14]     │   │   └── horizon_db_rm
+[05:08:14]     │   ├── quasar_config_generate_logging_fluentd
+[05:08:14]     │   ├── quasar_config_generate_policy_restart
+[05:08:14]     │   └─┬ quasar_dir_prepare
+[05:08:14]     │     └─┬ <series>
+[05:08:14]     │       └── quasar_dir_prepare
+[05:08:14]     └─┬ quasar_up
+[05:08:14]       └─┬ <series>
+[05:08:14]         └── quasar_up
 ```
+
+Check the status or do the cleanup the docker unit can be used:
+```bash
+[05:08:14] ├── docker_check
+[05:08:14] ├── docker_containers_status_running
+[05:08:14] ├── docker_containers_status_all
+[05:08:14] ├── docker_containers_kill
+[05:08:14] ├── docker_containers_remove
+[05:08:14] ├── docker_images_remove_dangling
+[05:08:14] ├── docker_images_remove_all
+[05:08:14] ├── docker_volumes_remove_dangling
+[05:08:14] ├── docker_network_prune
+[05:08:14] ├── docker_mounts_status
+[05:08:14] ├─┬ docker_clean
+[05:08:14] │ └─┬ <series>
+[05:08:14] │   ├── docker_check
+[05:08:14] │   ├── docker_containers_kill
+[05:08:14] │   ├── docker_containers_remove
+[05:08:14] │   ├── docker_images_remove_dangling
+[05:08:14] │   ├── docker_volumes_remove_dangling
+[05:08:14] │   └── docker_network_prune
+```
+Note, that the cleanup does not remove the persistant data on purpose.
+You can find the persistant data in ${STELLAR_HOME}/${TARGET}/data.
 
 ## Backup
 ### Grafana
+At the moment the dashboard deployment is not automated yet.
+
 #### Data sources
 Backup:
 ```bash

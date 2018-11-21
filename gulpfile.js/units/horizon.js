@@ -1,6 +1,6 @@
 const
     gulp = require("gulp"),
-    config = require("../lib/utils").cfg(),
+    config = require("../lib/utils").config,
     logger = require("../lib/utils").logger,
     child_process = require("child_process"),
     mkdirp = require("mkdirp"),

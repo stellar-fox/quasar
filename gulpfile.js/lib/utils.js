@@ -3,7 +3,7 @@ const
     appRoot = require("app-root-path")
 
 module.exports = {
-    cfg: function () {
+    config: (() => {
         checkEnv(["STELLAR_HOME", "DOMAIN", "HOSTNAME"])
         const
             STELLAR_ROOT = process.env.STELLAR_HOME,
@@ -26,7 +26,7 @@ module.exports = {
             "USER_ME": process.geteuid().toString(),
             "GROUP_ME": process.getegid().toString(),
         }
-    },
+    })(),
     deep_clone: function (dictionary) {
         return JSON.parse(JSON.stringify(dictionary))
     },
@@ -37,5 +37,5 @@ module.exports = {
             Log = require("log"),
             logger = new Log(loglevel)
         return logger
-    })()
+    })(),
 }

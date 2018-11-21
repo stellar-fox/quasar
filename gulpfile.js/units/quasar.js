@@ -1,7 +1,7 @@
 const
     gulp = require("gulp"),
     argv = require("yargs").argv,
-    config = require("../lib/utils").cfg(),
+    config = require("../lib/utils").config,
     logger = require("../lib/utils").logger,
     deep_clone = require("../lib/utils").deep_clone,
     child_process = require("child_process"),

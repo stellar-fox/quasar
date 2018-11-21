@@ -12,16 +12,13 @@
 
 const
     gulp = require("gulp"),
-    argv = require("yargs").argv,
     config = require("../lib/utils").cfg(),
+    logger = require("../lib/utils").logger,
     child_process = require("child_process"),
     mkdirp = require("mkdirp"),
     yaml = require("js-yaml"),
     { series } = require("gulp"),
-    { string } = require("@xcmats/js-toolbox"),
-    loglevel = (argv.loglevel === undefined) ? "info" : argv.loglevel,
-    Log = require("log"),
-    log = new Log(loglevel)
+    { string } = require("@xcmats/js-toolbox")
 
 
 
@@ -37,7 +34,7 @@ let docker_compose_cmd_prefix =
 // ...
 function bridge_db_up (cb) {
     const cmd = `${docker_compose_cmd_prefix} up -d bridge-db`
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     child_process.execSync(cmd, { env: config }).toString()
     // Lets give it some time to spawn it
     setTimeout(cb, 5000)
@@ -49,9 +46,9 @@ function bridge_db_up (cb) {
 // ...
 function bridge_db_rm (cb) {
     const cmd = `${docker_compose_cmd_prefix} rm bridge-db`
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     const out = child_process.execSync(cmd, { env: config }).toString()
-    log.debug(out)
+    logger.debug(out)
     cb()
 }
 
@@ -62,11 +59,11 @@ function bridge_db_rm (cb) {
 function bridge_db_init (cb) {
     const cmd = `${docker_compose_cmd_prefix} run --rm  bridge /bin/bash -c `
         + string.quote("bridge --config /etc/bridge.cfg --migrate-db")
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     const out = child_process.execSync(cmd, {
         env: { PATH: process.env.PATH, ...config },
     }).toString()
-    log.debug(out)
+    logger.debug(out)
     cb()
 }
 
@@ -76,14 +73,14 @@ function bridge_db_init (cb) {
 // ...
 function bridge_config_show (cb) {
     const cmd = `${docker_compose_cmd_prefix} config`
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     const
         a = child_process.execSync(cmd, { "env": config }).toString(),
         b = yaml.safeDump({
             "bridge-db": yaml.safeLoad(a)["services"]["bridge-db"],
             "bridge": yaml.safeLoad(a)["services"]["bridge"],
         })
-    log.debug(b)
+    logger.debug(b)
     cb()
 }
 

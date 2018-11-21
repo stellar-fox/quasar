@@ -2,6 +2,7 @@ const
     gulp = require("gulp"),
     argv = require("yargs").argv,
     config = require("../lib/utils").cfg(),
+    logger = require("../lib/utils").logger,
     deep_clone = require("../lib/utils").deep_clone,
     child_process = require("child_process"),
     mkdirp = require("mkdirp"),
@@ -12,9 +13,6 @@ const
     compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`,
     log_fluentd = (argv.log2fluentd === undefined) ? false : true,
     restart_always = (argv.restartalways === undefined && !log_fluentd) ? false : true,
-    loglevel = (argv.loglevel === undefined) ? "info" : argv.loglevel,
-    Log = require("log"),
-    log = new Log(loglevel),
     log_switch = log_fluentd ? `-f ${config.QUASAR_ROOT}/docker/compose/logging_fluentd.yml` : "",
     restart_policy = restart_always ? `-f ${config.QUASAR_ROOT}/docker/compose/restart_policy.yml` : ""
 
@@ -29,11 +27,11 @@ function quasar_up (cb) {
         restart_policy,
         "up -d",
     ].join(string.space())
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     const output = child_process.execSync(cmd, {
         env: { PATH: process.env.PATH, ...config },
     }).toString()
-    log.debug(`Output:\n${output}\n`)
+    logger.debug(`Output:\n${output}\n`)
     // Lets give it some time to spawn it
     setTimeout(cb, 2000)
 }
@@ -44,11 +42,11 @@ function quasar_up (cb) {
 // ...
 function quasar_down (cb) {
     const cmd = `${compose_cmd} down`
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     const output = child_process.execSync(cmd,  {
         env: { PATH: process.env.PATH, ...config },
     }).toString()
-    log.debug(`Output:\n${output}\n`)
+    logger.debug(`Output:\n${output}\n`)
     cb()
 }
 
@@ -63,7 +61,7 @@ function quasar_config_show (cb) {
         restart_policy,
         "config",
     ].join(string.space())
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     const out = child_process.execSync(cmd, {"env": config}).toString()
     console.log(out)
     cb()
@@ -158,7 +156,6 @@ gulp.task("quasar_config_show", quasar_config_show)
 gulp.task("quasar_config_generate_logging_fluentd", quasar_config_generate_logging_fluentd)
 gulp.task("quasar_config_generate_policy_restart", quasar_config_generate_policy_restart)
 gulp.task("quasar_dir_prepare", series(quasar_dir_prepare))
-gulp.task("quasar_build", gulp.parallel("cygnus_build", "deneb_build"))
 gulp.task("quasar_init", gulp.parallel(
     "influx_init",
     "core_init",
@@ -170,4 +167,3 @@ gulp.task("quasar_init", gulp.parallel(
 ))
 gulp.task("quasar_up", series(quasar_up))
 gulp.task("quasar_down", series(quasar_down))
-gulp.task("quasar_first_run", series("quasar_build", "quasar_init", "quasar_up"))

@@ -30,4 +30,12 @@ module.exports = {
     deep_clone: function (dictionary) {
         return JSON.parse(JSON.stringify(dictionary))
     },
+    logger: (() => {
+        const
+            argv = require("yargs").argv,
+            loglevel = (argv.loglevel === undefined) ? "info" : argv.loglevel,
+            Log = require("log"),
+            logger = new Log(loglevel)
+        return logger
+    })()
 }

@@ -1,16 +1,13 @@
 const
     gulp = require("gulp"),
-    argv = require("yargs").argv,
     config = require("../lib/utils").cfg(),
+    logger = require("../lib/utils").logger,
     Influx = require("influx"),
     child_process = require("child_process"),
     mkdirp = require("mkdirp"),
     yaml = require("js-yaml"),
     { series } = require("gulp"),
-    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`,
-    loglevel = (argv.loglevel === undefined) ? "info" : argv.loglevel,
-    Log = require("log"),
-    log = new Log(loglevel)
+    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`
 
 
 
@@ -18,7 +15,7 @@ const
 // ...
 function influxdb_up (cb) {
     const cmd = `${compose_cmd} up -d influxdb`
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     child_process.execSync(cmd, {"env": config}).toString()
     // Lets give it some time to spawn it
     setTimeout(cb, 2000)
@@ -30,7 +27,7 @@ function influxdb_up (cb) {
 // ...
 function influxdb_rm (cb) {
     const cmd = `${compose_cmd} rm influxdb`
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     const out = child_process.execSync(cmd, {"env": config}).toString()
     console.log(out)
     cb()
@@ -42,7 +39,7 @@ function influxdb_rm (cb) {
 // ...
 function influxdb_config_show (cb) {
     const cmd = `${compose_cmd} config`
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     const
         a = child_process.execSync(cmd, {"env": config}).toString(),
         b = yaml.safeDump({ "influxdb": yaml.safeLoad(a)["services"]["influxdb"] })
@@ -67,7 +64,7 @@ function influxdb_init (cb) {
             }
         })
     influx.getDatabaseNames().then(names => {
-        log.debug(names)})
+        logger.debug(names)})
     cb()
 }
 

@@ -1,16 +1,13 @@
 const
     gulp = require("gulp"),
-    argv = require("yargs").argv,
     config = require("../lib/utils").cfg(),
+    logger = require("../lib/utils").logger,
     child_process = require("child_process"),
     mkdirp = require("mkdirp"),
     yaml = require("js-yaml"),
     { series } = require("gulp"),
     { string } = require("@xcmats/js-toolbox"),
-    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`,
-    loglevel = (argv.loglevel === undefined) ? "info" : argv.loglevel,
-    Log = require("log"),
-    log = new Log(loglevel)
+    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`
 
 
 
@@ -18,7 +15,7 @@ const
 // ...
 function horizon_db_up (cb) {
     const cmd = `${compose_cmd} up -d horizon-db`
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     child_process.execSync(cmd, {"env": config}).toString()
     // Lets give it some time to spawn it
     setTimeout(cb, 5000)
@@ -30,9 +27,9 @@ function horizon_db_up (cb) {
 // ...
 function horizon_db_rm (cb) {
     const cmd = `${compose_cmd} rm horizon-db`
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     const out = child_process.execSync(cmd, {"env": config}).toString()
-    log.debug(out)
+    logger.debug(out)
     cb()
 }
 
@@ -52,11 +49,11 @@ function horizon_db_init (cb) {
         ].join(string.space()), "\\\"", "\\\""),
         init_cmd = string.quote(`horizon db init --db-url=${db_params}`),
         cmd = `${compose_cmd} run --rm  horizon /bin/bash -c ${init_cmd}`
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     const out = child_process.execSync(cmd, {
         env: { PATH: process.env.PATH, ...config },
     }).toString()
-    log.debug(out)
+    logger.debug(out)
     cb()
 }
 
@@ -66,7 +63,7 @@ function horizon_db_init (cb) {
 // ...
 function horizon_config_show (cb) {
     const cmd = `${compose_cmd} config`
-    log.info(`Command:\n${cmd}\n`)
+    logger.info(`Command:\n${cmd}\n`)
     const
         a = child_process.execSync(cmd, {"env": config}).toString(),
         b = yaml.safeDump({

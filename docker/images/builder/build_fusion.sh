@@ -20,6 +20,6 @@ npm run build:lib
 cd -
 rm /workspace/fusion/src/lib/shambhala.client.js
 ln -s /workspace/shambhala/dist.lib/shambhala.client.js /workspace/fusion/src/lib/shambhala.client.js
-/files/buildscript.sh /workspace fusion fusion_build_`date +"%Y%m%d%H%M%S"`
+/workspace/quasar/docker/images/builder/files/buildscript.sh /workspace fusion fusion_build_`date +"%Y%m%d%H%M%S"`
 """
 

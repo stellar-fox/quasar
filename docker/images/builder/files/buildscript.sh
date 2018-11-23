@@ -29,7 +29,9 @@ cordova create $OUTPUT
 cd $WORKSPACE/$OUTPUT
 echo "Adding cordova android plugin"
 cordova platform add android
+cordova plugin add cordova-plugin-httpd
 rm -rf $WORKSPACE/$OUTPUT/www/*
 cp -R $WORKSPACE/$INPUT/build $WORKSPACE/$OUTPUT/www/htdocs
-cp /files/index.html $WORKSPACE/$OUTPUT/www/.
+cp $WORKSPACE/quasar/docker/images/builder/files/index.html $WORKSPACE/$OUTPUT/www/.
+cp $WORKSPACE/quasar/docker/images/builder/files/bootstrap.js $WORKSPACE/$OUTPUT/www/.
 cordova build

@@ -20,8 +20,12 @@ const onLoad = () => {
     document.addEventListener("deviceready", onDeviceReady, false)
 }
 
-const update = (content) => {
+const update_app = (content) => {
     document.getElementById("main").innerHTML = content
+}
+
+const update = (content) => {
+    document.getElementById("log").innerHTML = content
 }
 
 const initHttpd = () => {
@@ -36,6 +40,10 @@ const onDeviceReady = () => {
     startServer(httpd, "htdocs")
 }
 
+const onLoadStart = () => {
+    update(append_log("linke opened..."))
+}
+
 const startServer = (httpd, wwwroot) => {
     update(append_log("starting server..."))
     httpd.startServer(
@@ -45,7 +53,7 @@ const startServer = (httpd, wwwroot) => {
         },
         (url) => {
             update(append_log("server started"))
-            update(render_app(url))
+            update_app(render_app(url))
         },
         (msg) => { 
             update(append_log("server failed to start"))
@@ -53,3 +61,4 @@ const startServer = (httpd, wwwroot) => {
         }
     )
 }
+

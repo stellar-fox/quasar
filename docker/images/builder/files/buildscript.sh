@@ -30,6 +30,7 @@ cd $WORKSPACE/$OUTPUT
 echo "Adding cordova android plugin"
 cordova platform add android
 cordova plugin add cordova-plugin-httpd
+cordova plugin add cordova-plugin-inappbrowser
 rm -rf $WORKSPACE/$OUTPUT/www/*
 cp -R $WORKSPACE/$INPUT/build $WORKSPACE/$OUTPUT/www/htdocs
 cp $WORKSPACE/quasar/docker/images/builder/files/index.html $WORKSPACE/$OUTPUT/www/.

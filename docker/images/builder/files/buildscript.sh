@@ -33,6 +33,14 @@ cordova plugin add cordova-plugin-httpd
 cordova plugin add cordova-plugin-inappbrowser
 rm -rf $WORKSPACE/$OUTPUT/www/*
 cp -R $WORKSPACE/$INPUT/build $WORKSPACE/$OUTPUT/www/htdocs
+rsvg-convert $WORKSPACE/$OUTPUT/www/htdocs/static/media/logo.b82958dc.svg > $WORKSPACE/$OUTPUT/www/htdocs/static/media/logo.b82958dc.png
+mkdir $WORKSPACE/$OUTPUT/res/android
+rsvg-convert -w 36 -h 36 $WORKSPACE/$OUTPUT/www/htdocs/static/media/logo.b82958dc.svg > $WORKSPACE/$OUTPUT/res/android/ldpi.png
+rsvg-convert -w 48 -h 48 $WORKSPACE/$OUTPUT/www/htdocs/static/media/logo.b82958dc.svg > $WORKSPACE/$OUTPUT/res/android/mdpi.png
+rsvg-convert -w 72 -h 72 $WORKSPACE/$OUTPUT/www/htdocs/static/media/logo.b82958dc.svg > $WORKSPACE/$OUTPUT/res/android/hdpi.png
+rsvg-convert -w 96 -h 96 $WORKSPACE/$OUTPUT/www/htdocs/static/media/logo.b82958dc.svg > $WORKSPACE/$OUTPUT/res/android/xhdpi.png
+find $WORKSPACE/$OUTPUT/www/htdocs -type f | xargs -I{} sed -i 's/logo.b82958dc.svg/logo.b82958dc.png/g' {}
 cp $WORKSPACE/quasar/docker/images/builder/files/index.html $WORKSPACE/$OUTPUT/www/.
 cp $WORKSPACE/quasar/docker/images/builder/files/bootstrap.js $WORKSPACE/$OUTPUT/www/.
+cp $WORKSPACE/quasar/docker/images/builder/files/config.xml $WORKSPACE/$OUTPUT/.
 cordova build

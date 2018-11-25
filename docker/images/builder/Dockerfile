@@ -36,6 +36,7 @@ RUN set -xe \
         gnupg \
         libgcc \
         libstdc++ \
+        librsvg \
         linux-headers \ 
         make \
         python \

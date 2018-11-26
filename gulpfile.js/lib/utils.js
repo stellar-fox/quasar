@@ -1,19 +1,19 @@
 const
     checkEnv = require("check-env"),
-    appRoot = require("app-root-path")
-
-module.exports = {
-    config: (() => {
+    appRoot = require("app-root-path"),
+    quasar_root = appRoot.path,
+    child_process = require("child_process"),
+    // objects
+    config = (() => {
         checkEnv(["STELLAR_HOME", "DOMAIN", "HOSTNAME"])
         const
             STELLAR_ROOT = process.env.STELLAR_HOME,
             TARGET = "test",
-            QUASAR_ROOT = appRoot.path,
             WORKSPACE = `${STELLAR_ROOT}/${TARGET}`
 
         return {
-            "QUASAR_ROOT": QUASAR_ROOT,
-            "CONFIG_ROOT": `${QUASAR_ROOT}/docker/etc`,
+            "QUASAR_ROOT": quasar_root,
+            "CONFIG_ROOT": `${quasar_root}/docker/etc`,
             "STELLAR_ROOT": STELLAR_ROOT,
             "TARGET": TARGET,
             "WORKSPACE": WORKSPACE,
@@ -28,10 +28,8 @@ module.exports = {
             "INGEST": "false",
         }
     })(),
-    deep_clone: function (dictionary) {
-        return JSON.parse(JSON.stringify(dictionary))
-    },
-    logger: (() => {
+
+    logger = (() => {
         const
             argv = require("yargs").argv,
             loglevel = (argv.loglevel === undefined) ? "info" : argv.loglevel,
@@ -39,4 +37,18 @@ module.exports = {
             logger = new Log(loglevel)
         return logger
     })(),
+
+    deep_clone = (dictionary) => JSON.parse(JSON.stringify(dictionary)),
+    docker_build = (module, tag) => {
+        const cmd =
+            `docker build -f ${quasar_root}/docker/images/${module}/Dockerfile -t ${tag} .`
+        logger.info(`Command:\n${cmd}\n`)
+        child_process.execSync(cmd, {env: config, stdio:[0,1,2]})
+    }
+
+module.exports = {
+    config: config,
+    logger: logger,
+    deep_clone: deep_clone,
+    docker_build: docker_build
 }

@@ -156,6 +156,12 @@ const quasar_dir_prepare = (cb) => {
 
 
 // ...
+gulp.task("quasar_build", gulp.series(
+    "cygnus_build",
+    "deneb_build",
+    "fusion_build",
+    "shambhala_build",
+))
 gulp.task("quasar_config_show", quasar_config_show)
 gulp.task("quasar_config_generate_logging_fluentd", quasar_config_generate_logging_fluentd)
 gulp.task("quasar_config_generate_policy_restart", quasar_config_generate_policy_restart)

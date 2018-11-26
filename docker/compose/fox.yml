@@ -20,10 +20,40 @@ services:
     container_name: fox_deneb_db
     image: deneb-db:latest
     ports:
-      - 5432:5432
+      - 5530:5432
     environment:
       - POSTGRES_DB=deneb
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=aquila
     volumes:
       - ${DATA_ROOT}/deneb-db:/var/lib/postgresql/data:z
+
+  fusion:
+    container_name: fox_fusion
+    image: fusion:latest
+    volumes:
+      - ${SENSITIVE_CONFIG_ROOT}/fusion.json:/fusion/src/config/configuration.json
+    links:
+      - deneb
+      - deneb-db
+      - shambhala
+
+  shambhala:
+    container_name: fox_shambhala
+    image: shambhala:latest
+    volumes:
+      - ${SENSITIVE_CONFIG_ROOT}/shambhala.json:/shambhala/src/config/configuration.json
+    links:
+      - deneb-db
+
+  shambhala-db:
+    container_name: fox_shambhala_db
+    image: postgres:11.0-alpine
+    ports:
+      - 5531:5432
+    environment:
+      - POSTGRES_DB=shambhala
+      - POSTGRES_PASSWORD=shambhala
+      - POSTGRES_USER=shambhala
+    volumes:
+      - ${DATA_ROOT}/shambhala-db:/var/lib/postgresql/data:z

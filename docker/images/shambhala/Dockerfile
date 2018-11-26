@@ -2,7 +2,7 @@ FROM node:10.12.0-alpine
 
 MAINTAINER Grzegorz Szadkowski <5392918+gszadkow@users.noreply.github.com>
 
-ENV DENEB_COMMIT 4de9c1293e6a2aed7ef04b61df5655f11c96c533
+ENV SHAMBHALA_COMMIT 6799f17a78edfa0041e2e610da183cb23cd7aa80
 
 RUN set -e \
     && apk update \
@@ -12,12 +12,12 @@ RUN set -e \
         make \
         python \
         unzip \
-    && wget -O deneb.zip https://github.com/stellar-fox/deneb/archive/${DENEB_COMMIT}.zip \
-    && unzip deneb.zip \
-    && mv /deneb-${DENEB_COMMIT} /deneb \
-    && cd /deneb \
+    && wget -O shambhala.zip https://github.com/stellar-fox/shambhala/archive/${SHAMBHALA_COMMIT}.zip \
+    && unzip shambhala.zip \
+    && mv /shambhala-${SHAMBHALA_COMMIT} /shambhala \
+    && cd /shambhala \
     && npm install \
     && echo "Done"
 
-WORKDIR /deneb
+WORKDIR /shambhala
 ENTRYPOINT ["npm", "start"]

@@ -1,9 +1,9 @@
 /**
  * Quasar.
  *
- * Gulp unit for cygnus.
+ * Gulp unit for fusion.
  *
- * @module cygnus-lib
+ * @module fusion-lib
  * @license Apache-2.0
  */
 
@@ -18,8 +18,8 @@ const
 
     
 // ...
-const cygnus_build = (cb) => {
-    docker_build("cygnus", "cygnus:latest")
+const fusion_build = (cb) => {
+    docker_build("fusion", "fusion:latest")
     cb()
 }
 
@@ -27,4 +27,4 @@ const cygnus_build = (cb) => {
 
 
 // ...
-gulp.task("cygnus_build", cygnus_build)
+gulp.task("fusion_build", fusion_build)

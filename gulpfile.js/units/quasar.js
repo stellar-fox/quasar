@@ -177,3 +177,8 @@ gulp.task("quasar_init", gulp.parallel(
 ))
 gulp.task("quasar_up", series(quasar_up))
 gulp.task("quasar_down", series(quasar_down))
+gulp.task("quasar_first_run", series(
+    "quasar_build",
+    "quasar_init",
+    "quasar_up",
+))

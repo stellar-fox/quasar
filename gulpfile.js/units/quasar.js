@@ -10,7 +10,12 @@ const
     fs = require("fs"),
     { series } = require("gulp"),
     { string } = require("@xcmats/js-toolbox"),
-    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`,
+    compose_cmd = [
+        "docker-compose",
+        `-f ${config.QUASAR_ROOT}/docker/compose/fox.yml`,
+        `-f ${config.QUASAR_ROOT}/docker/compose/monitoring.yml`,
+        `-f ${config.QUASAR_ROOT}/docker/compose/stellar.yml`,
+    ].join(string.space()),
     log_fluentd = (argv.log2fluentd === undefined) ? false : true,
     restart_always = (argv.restartalways === undefined && !log_fluentd) ? false : true,
     log_switch = log_fluentd ? `-f ${config.QUASAR_ROOT}/docker/compose/logging_fluentd.yml` : "",
@@ -20,7 +25,7 @@ const
 
 
 // ...
-function quasar_up (cb) {
+const quasar_up = (cb) => {
     const cmd = [
         compose_cmd,
         log_switch,
@@ -40,7 +45,7 @@ function quasar_up (cb) {
 
 
 // ...
-function quasar_down (cb) {
+const quasar_down = (cb) => {
     const cmd = `${compose_cmd} down`
     logger.info(`Command:\n${cmd}\n`)
     const output = child_process.execSync(cmd,  {
@@ -54,7 +59,7 @@ function quasar_down (cb) {
 
 
 // ...
-function quasar_config_show (cb) {
+const quasar_config_show = (cb) => {
     const cmd = [
         compose_cmd,
         log_switch,
@@ -71,22 +76,21 @@ function quasar_config_show (cb) {
 
 
 // ...
-function quasar_config_generate_logging_fluentd (cb) {
+const get_service_names = (config_path) => {
+    const compose_config = yaml.safeLoad(fs.readFileSync(config_path, "utf8")),
+        services = Object.keys(compose_config["services"])
+    return services
+}
+
+
+
+
+// ...
+const quasar_config_generate_logging_fluentd = (cb) => {
     const
-        compose_main = yaml.safeLoad(fs.readFileSync(
-            `${config["QUASAR_ROOT"]}/docker/compose/docker-compose.yml`,
-            "utf8")),
-        services = Object.keys(compose_main["services"]),
-        monitoring_services = [
-            "fluentd",
-            "influxdb",
-            "grafana",
-            "telegraf",
-            "chronograf",
-            "kapacitor",
-            "dns",
-        ],
-        monitored_services = [...services].filter(x => !monitoring_services.includes(x)),
+        services_fox = get_service_names(`${config["QUASAR_ROOT"]}/docker/compose/fox.yml`),
+        services_stellar = get_service_names(`${config["QUASAR_ROOT"]}/docker/compose/stellar.yml`),
+        monitored_services = [...services_fox, ...services_stellar],
         logging_fluentd_template  = yaml.safeLoad(fs.readFileSync(
             `${config["CONFIG_ROOT"]}/templates/logging_fluentd.yml`,
             "utf8")),
@@ -109,12 +113,12 @@ function quasar_config_generate_logging_fluentd (cb) {
 
 
 // ...
-function quasar_config_generate_policy_restart (cb) {
+const quasar_config_generate_policy_restart = (cb) => {
     const
-        compose_main = yaml.safeLoad(fs.readFileSync(
-            `${config["QUASAR_ROOT"]}/docker/compose/docker-compose.yml`,
-            "utf8")),
-        services = Object.keys(compose_main["services"]),
+        services_fox = get_service_names(`${config["QUASAR_ROOT"]}/docker/compose/fox.yml`),
+        services_stellar = get_service_names(`${config["QUASAR_ROOT"]}/docker/compose/stellar.yml`),
+        services_monitoring = get_service_names(`${config["QUASAR_ROOT"]}/docker/compose/monitoring.yml`),
+        services = [...services_fox, ...services_stellar, ...services_monitoring],
         restart_policy = { restart: "always" },
         restart_policy_layer = services.reduce(
             (d, o) => {
@@ -135,7 +139,7 @@ function quasar_config_generate_policy_restart (cb) {
 
 
 // ...
-function quasar_dir_prepare (cb) {
+const quasar_dir_prepare = (cb) => {
     const services = [
         "chronograf",
         "grafana",

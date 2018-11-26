@@ -7,13 +7,13 @@ const
     yaml = require("js-yaml"),
     { series } = require("gulp"),
     { string } = require("@xcmats/js-toolbox"),
-    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`
+    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/stellar.yml`
 
 
 
 
 // ...
-function horizon_db_up (cb) {
+const horizon_db_up = (cb) => {
     const cmd = `${compose_cmd} up -d horizon-db`
     logger.info(`Command:\n${cmd}\n`)
     child_process.execSync(cmd, {"env": config}).toString()
@@ -25,7 +25,7 @@ function horizon_db_up (cb) {
 
 
 // ...
-function horizon_db_rm (cb) {
+const horizon_db_rm = (cb) => {
     const cmd = `${compose_cmd} rm horizon-db`
     logger.info(`Command:\n${cmd}\n`)
     const out = child_process.execSync(cmd, {"env": config}).toString()
@@ -37,7 +37,7 @@ function horizon_db_rm (cb) {
 
 
 // ...
-function horizon_db_init (cb) {
+const horizon_db_init = (cb) => {
     const
         db_params = string.wrap([
             "dbname=horizon",
@@ -61,7 +61,7 @@ function horizon_db_init (cb) {
 
 
 // ...
-function horizon_config_show (cb) {
+const horizon_config_show = (cb) => {
     const cmd = `${compose_cmd} config`
     logger.info(`Command:\n${cmd}\n`)
     const
@@ -78,7 +78,7 @@ function horizon_config_show (cb) {
 
 
 // ...
-function horizon_dir (cb) {
+const horizon_dir = (cb) => {
     mkdirp(`${config["DATA_ROOT"]}/horizon/history`)
     mkdirp(`${config["DATA_ROOT"]}/horizon-db`)
     cb()

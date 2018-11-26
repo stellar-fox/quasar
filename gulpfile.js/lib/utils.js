@@ -25,6 +25,7 @@ module.exports = {
             "HOSTNAME": process.env.HOSTNAME,
             "USER_ME": process.geteuid().toString(),
             "GROUP_ME": process.getegid().toString(),
+            "INGEST": "false",
         }
     })(),
     deep_clone: function (dictionary) {

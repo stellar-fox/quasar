@@ -30,8 +30,8 @@ const build = (module, tag) => {
 
     
 // ...
-function cygnus_build (cb) {
-    build("cygnus", "latest")
+const cygnus_build = (cb) => {
+    build("cygnus", "cygnus:latest")
     cb()
 }
 

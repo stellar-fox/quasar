@@ -30,8 +30,9 @@ const build = (module, tag) => {
 
     
 // ...
-function deneb_build (cb) {
-    build("deneb", "latest")
+const deneb_build = (cb) => {
+    build("deneb", "deneb:latest")
+    build("deneb-db", "deneb-db:latest")
     cb()
 }
 

@@ -1,0 +1,29 @@
+version: '3'
+services:
+  cygnus:
+    container_name: fox_cygnus
+    image: cygnus:latest
+    ports:
+      - 8082:3000
+    volumes:
+      - ${SENSITIVE_CONFIG_ROOT}/cygnus.js:/cygnus/src/config.js
+
+  deneb:
+    container_name: fox_deneb
+    image: deneb:latest
+    volumes:
+      - ${SENSITIVE_CONFIG_ROOT}/deneb.json:/deneb/src/config/configuration.json
+    links:
+      - deneb-db
+
+  deneb-db:
+    container_name: fox_deneb_db
+    image: deneb-db:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=deneb
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=aquila
+    volumes:
+      - ${DATA_ROOT}/deneb-db:/var/lib/postgresql/data:z

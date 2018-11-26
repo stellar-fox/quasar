@@ -1,0 +1,109 @@
+version: '3'
+services:
+  horizon:
+    container_name: fox_horizon
+    image: stellarfox/horizon:ubuntu-18.04-v0.14.2
+    command:
+      - horizon
+      - --ingest=${INGEST}
+      - --db-url=dbname=horizon user=horizon password=horizon host=fox_horizon_db port=5432 sslmode=disable
+      - --stellar-core-db-url=host=stellar-core-db port=5432 user=core password=core sslmode=disable
+      - --stellar-core-url=host=fox_stellar_core port=11626 sslmode=disable
+    ports:
+      - 8001:8000
+    links:
+      - horizon-db
+
+  horizon-db:
+    container_name: fox_horizon_db
+    image: postgres:11.0-alpine
+    ports:
+      - 5435:5432
+    environment:
+      - POSTGRES_DB=horizon
+      - POSTGRES_PASSWORD=horizon
+      - POSTGRES_USER=horizon
+    volumes:
+      - ${DATA_ROOT}/horizon-db:/var/lib/postgresql/data:z
+
+  stellar-core:
+    container_name: fox_stellar_core
+    image: stellarfox/stellar-core:alpine-3.8-v10.0.0
+    ports:
+      - 11626:11626
+    volumes:
+      - ${SENSITIVE_CONFIG_ROOT}/stellar-core.cfg:/etc/stellar-core.cfg:ro
+      - ${DATA_ROOT}/stellar-core/history:/tmp/stellar-core/history/vs:z
+    command:
+      - stellar-core
+      - --conf
+      - /etc/stellar-core.cfg
+    links:
+      - stellar-core-db
+
+  stellar-core-db:
+    container_name: fox_stellar_core_db
+    hostname: fox_stellar_core_db
+    image: postgres:11.0-alpine
+    ports:
+      - 5434:5432
+    environment:
+      - POSTGRES_DB=core
+      - POSTGRES_PASSWORD=core
+      - POSTGRES_USER=core
+    volumes:
+      - ${DATA_ROOT}/stellar-core-db:/var/lib/postgresql/data:z
+
+  federation:
+    container_name: fox_federation
+    image: stellarfox/federation:latest
+    ports:
+      - 8000:8000
+    volumes:
+      - ${SENSITIVE_CONFIG_ROOT}/federation.cfg:/etc/federation.cfg:ro
+    command:
+      - federation
+      - --conf
+      - /etc/federation.cfg
+    links:
+      - federation-db
+
+  federation-db:
+    container_name: fox_federation_db
+    hostname: fox_federation_db
+    image: postgres:11.0-alpine
+    ports:
+      - 5436:5432
+    environment:
+      - POSTGRES_DB=federation
+      - POSTGRES_PASSWORD=federation
+      - POSTGRES_USER=federation
+    volumes:
+      - ${DATA_ROOT}/federation-db:/var/lib/postgresql/data:z
+
+  bridge:
+    container_name: fox_bridge
+    image: stellarfox/bridge:ubuntu-18.04-v0.0.31
+    ports:
+      - 8006:8006
+    volumes:
+      - ${SENSITIVE_CONFIG_ROOT}/bridge.cfg:/etc/bridge.cfg:ro
+    command:
+      - bridge
+      - --config
+      - /etc/bridge.cfg
+    links:
+      - bridge-db
+
+  bridge-db:
+    container_name: fox_bridge_db
+    hostname: fox_bridge_db
+    image: postgres:11.0-alpine
+    ports:
+      - 5437:5432
+    environment:
+      - POSTGRES_DB=bridge
+      - POSTGRES_PASSWORD=bridge
+      - POSTGRES_USER=bridge
+    volumes:
+      - ${DATA_ROOT}/bridge-db:/var/lib/postgresql/data:z

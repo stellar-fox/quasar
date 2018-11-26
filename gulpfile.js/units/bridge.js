@@ -18,22 +18,15 @@ const
     mkdirp = require("mkdirp"),
     yaml = require("js-yaml"),
     { series } = require("gulp"),
-    { string } = require("@xcmats/js-toolbox")
+    { string } = require("@xcmats/js-toolbox"),
+    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/stellar.yml`
 
 
 
 
 // ...
-let docker_compose_cmd_prefix =
-    "docker-compose -f " +
-    `${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`
-
-
-
-
-// ...
-function bridge_db_up (cb) {
-    const cmd = `${docker_compose_cmd_prefix} up -d bridge-db`
+const bridge_db_up = (cb) => {
+    const cmd = `${compose_cmd} up -d bridge-db`
     logger.info(`Command:\n${cmd}\n`)
     child_process.execSync(cmd, { env: config }).toString()
     // Lets give it some time to spawn it
@@ -44,8 +37,8 @@ function bridge_db_up (cb) {
 
 
 // ...
-function bridge_db_rm (cb) {
-    const cmd = `${docker_compose_cmd_prefix} rm bridge-db`
+const bridge_db_rm = (cb) => {
+    const cmd = `${compose_cmd} rm bridge-db`
     logger.info(`Command:\n${cmd}\n`)
     const out = child_process.execSync(cmd, { env: config }).toString()
     logger.debug(out)
@@ -56,8 +49,8 @@ function bridge_db_rm (cb) {
 
 
 // ...
-function bridge_db_init (cb) {
-    const cmd = `${docker_compose_cmd_prefix} run --rm  bridge /bin/bash -c `
+const bridge_db_init = (cb) => {
+    const cmd = `${compose_cmd} run --rm  bridge /bin/bash -c `
         + string.quote("bridge --config /etc/bridge.cfg --migrate-db")
     logger.info(`Command:\n${cmd}\n`)
     const out = child_process.execSync(cmd, {
@@ -71,8 +64,8 @@ function bridge_db_init (cb) {
 
 
 // ...
-function bridge_config_show (cb) {
-    const cmd = `${docker_compose_cmd_prefix} config`
+const bridge_config_show = (cb) => {
+    const cmd = `${compose_cmd} config`
     logger.info(`Command:\n${cmd}\n`)
     const
         a = child_process.execSync(cmd, { "env": config }).toString(),
@@ -88,7 +81,7 @@ function bridge_config_show (cb) {
 
 
 // ...
-function bridge_dir (cb) {
+const bridge_dir = (cb) => {
     mkdirp(`${config["DATA_ROOT"]}/bridge/history`)
     mkdirp(`${config["DATA_ROOT"]}/bridge-db`)
     cb()

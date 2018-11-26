@@ -7,13 +7,13 @@ const
     mkdirp = require("mkdirp"),
     yaml = require("js-yaml"),
     { series } = require("gulp"),
-    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/docker-compose.yml`
+    compose_cmd = `docker-compose -f ${config.QUASAR_ROOT}/docker/compose/monitoring.yml`
 
 
 
 
 // ...
-function influxdb_up (cb) {
+const influxdb_up = (cb) => {
     const cmd = `${compose_cmd} up -d influxdb`
     logger.info(`Command:\n${cmd}\n`)
     child_process.execSync(cmd, {"env": config}).toString()
@@ -25,7 +25,7 @@ function influxdb_up (cb) {
 
 
 // ...
-function influxdb_rm (cb) {
+const influxdb_rm = (cb) => {
     const cmd = `${compose_cmd} rm influxdb`
     logger.info(`Command:\n${cmd}\n`)
     const out = child_process.execSync(cmd, {"env": config}).toString()
@@ -37,7 +37,7 @@ function influxdb_rm (cb) {
 
 
 // ...
-function influxdb_config_show (cb) {
+const influxdb_config_show = (cb) => {
     const cmd = `${compose_cmd} config`
     logger.info(`Command:\n${cmd}\n`)
     const
@@ -51,7 +51,7 @@ function influxdb_config_show (cb) {
 
 
 // ...
-function influxdb_init (cb) {
+const influxdb_init = (cb) => {
     const influx = new Influx.InfluxDB({
         host: "localhost",
         port: 8086,
@@ -72,7 +72,7 @@ function influxdb_init (cb) {
 
 
 // ...
-function influxdb_dir (cb) {
+const influxdb_dir = (cb) => {
     mkdirp(`${config["DATA_ROOT"]}/influxdb`)
     cb()
 }

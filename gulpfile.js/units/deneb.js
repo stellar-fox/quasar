@@ -19,8 +19,8 @@ const
     
 // ...
 const deneb_build = (cb) => {
-    docker_build("deneb", "deneb:latest")
-    docker_build("deneb-db", "deneb-db:latest")
+    docker_build("deneb", "deneb:latest", ".")
+    docker_build("deneb-db", "deneb-db:latest", ".")
     cb()
 }
 

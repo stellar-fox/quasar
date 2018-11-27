@@ -19,7 +19,7 @@ const
     
 // ...
 const cygnus_build = (cb) => {
-    docker_build("cygnus", "cygnus:latest")
+    docker_build("cygnus", "cygnus:latest", ".")
     cb()
 }
 

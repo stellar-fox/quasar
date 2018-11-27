@@ -49,6 +49,37 @@ const shambhala_db_rm = (cb) => {
 
 
 // ...
+const shambhala_up = (cb) => {
+    const cmd = [
+        `${compose_cmd} up -d shambhala-db`,
+        `${compose_cmd} up -d shambhala-server`,
+        `${compose_cmd} up -d shambhala-client`,
+    ].join(";")
+    logger.info(`Command:\n${cmd}\n`)
+    child_process.execSync(cmd, {"env": config}).toString()
+    // Lets give it some time to spawn it
+    setTimeout(cb, 5000)
+}
+
+
+
+
+// ...
+const shambhala_rm = (cb) => {
+    const cmd = [
+        `${compose_cmd} rm shambhala-client`,
+        `${compose_cmd} rm shambhala-server`,
+        `${compose_cmd} rm shambhala-db`,
+    ].join(";")
+    logger.info(`Command:\n${cmd}\n`)
+    const out = child_process.execSync(cmd, {"env": config}).toString()
+    logger.debug(out)
+    cb()
+}
+
+
+
+// ...
 const shambhala_dir = (cb) => {
     mkdirp(`${config["DATA_ROOT"]}/shambhala-db`)
     cb()
@@ -103,7 +134,7 @@ const shambhala_config_show = (cb) => {
     
 // ...
 const shambhala_build = (cb) => {
-    docker_build("shambhala", "shambhala:latest")
+    docker_build("shambhala", "shambhala:latest", `${config["QUASAR_ROOT"]}/docker/etc/shambhala/`)
     cb()
 }
 
@@ -113,3 +144,5 @@ const shambhala_build = (cb) => {
 // ...
 gulp.task("shambhala_build", shambhala_build)
 gulp.task("shambhala_init", series(shambhala_config_show, shambhala_dir, shambhala_db_up, shambhala_db_init, shambhala_db_rm))
+gulp.task("shambhala_up", shambhala_up)
+gulp.task("shambhala_rm", shambhala_rm)

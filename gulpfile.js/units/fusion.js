@@ -19,7 +19,7 @@ const
     
 // ...
 const fusion_build = (cb) => {
-    docker_build("fusion", "fusion:latest")
+    docker_build("fusion", "fusion:latest", ".")
     cb()
 }
 

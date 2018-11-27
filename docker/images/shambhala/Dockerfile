@@ -2,7 +2,10 @@ FROM node:10.12.0-alpine
 
 MAINTAINER Grzegorz Szadkowski <5392918+gszadkow@users.noreply.github.com>
 
-ENV SHAMBHALA_COMMIT 6799f17a78edfa0041e2e610da183cb23cd7aa80
+ENV SHAMBHALA_COMMIT d9c5c6c8acb23a8636ff108a37797889ef11bdbf
+
+ADD *.json /configs/
+#/shambhala/src/config/
 
 RUN set -e \
     && apk update \
@@ -16,8 +19,10 @@ RUN set -e \
     && unzip shambhala.zip \
     && mv /shambhala-${SHAMBHALA_COMMIT} /shambhala \
     && cd /shambhala \
+    && mv /configs/* /shambhala/src/config/. \
+    && rm -rf /configs \
     && npm install \
+    && npm run build:lib \
     && echo "Done"
 
 WORKDIR /shambhala
-ENTRYPOINT ["npm", "start"]

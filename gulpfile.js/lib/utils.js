@@ -39,9 +39,9 @@ const
     })(),
 
     deep_clone = (dictionary) => JSON.parse(JSON.stringify(dictionary)),
-    docker_build = (module, tag) => {
+    docker_build = (module, tag, context) => {
         const cmd =
-            `docker build -f ${quasar_root}/docker/images/${module}/Dockerfile -t ${tag} .`
+            `docker build -f ${quasar_root}/docker/images/${module}/Dockerfile -t ${tag} ${context}`
         logger.info(`Command:\n${cmd}\n`)
         child_process.execSync(cmd, {env: config, stdio:[0,1,2]})
     }

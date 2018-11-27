@@ -4,7 +4,7 @@ services:
     container_name: fox_cygnus
     image: cygnus:latest
     ports:
-      - 8082:3000
+      - 8181:3000
     volumes:
       - ${SENSITIVE_CONFIG_ROOT}/cygnus.js:/cygnus/src/config.js
 
@@ -31,20 +31,39 @@ services:
   fusion:
     container_name: fox_fusion
     image: fusion:latest
+    ports:
+      - 8182:3000
     volumes:
       - ${SENSITIVE_CONFIG_ROOT}/fusion.json:/fusion/src/config/configuration.json
     links:
       - deneb
       - deneb-db
-      - shambhala
+      - shambhala-server
 
-  shambhala:
-    container_name: fox_shambhala
+  shambhala-client:
+    container_name: fox_shambhala_client
     image: shambhala:latest
-    volumes:
-      - ${SENSITIVE_CONFIG_ROOT}/shambhala.json:/shambhala/src/config/configuration.json
+    ports:
+      - 8183:8080
+    # Configs baked at buildtime
+    # volumes:
+    #   - ${SENSITIVE_CONFIG_ROOT}/client.json:/shambhala/src/config/client.json
+    #   - ${SENSITIVE_CONFIG_ROOT}/host.json:/shambhala/src/config/host.json
     links:
-      - deneb-db
+      - shambhala-server
+    command: [ "npm", "start" ]
+
+  shambhala-server:
+    container_name: fox_shambhala_server
+    image: shambhala:latest
+    ports:
+      - 8184:8081
+    # Configs baked at buildtime
+    # volumes:
+    #  - ${SENSITIVE_CONFIG_ROOT}/server.json:/shambhala/src/config/server.json
+    links:
+      - shambhala-db
+    command: [ "npm", "run", "devApiServer" ]
 
   shambhala-db:
     container_name: fox_shambhala_db

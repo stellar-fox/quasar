@@ -1,0 +1,14 @@
+{
+    "port": 8081,
+    "database": {
+        "user": "shambhala",
+        "pass": "shambhala",
+        "host": "fox_shambhala_db",
+        "port": "5432",
+        "db": "shambhala"
+    },
+    "tables": {
+        "key_table": "key_v1",
+        "whitelist_table": "white_v1"
+    }
+}

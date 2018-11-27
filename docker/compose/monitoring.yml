@@ -104,6 +104,7 @@ services:
     volumes:
       - ${CONFIG_ROOT}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ${CONFIG_ROOT}/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ${SENSITIVE_CONFIG_ROOT}/cert:/etc/nginx/cert:ro
       - ${LOG_ROOT}/nginx:/var/log/nginx
     links:
       - pgadmin

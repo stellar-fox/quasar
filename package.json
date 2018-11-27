@@ -22,7 +22,8 @@
         "influx": "^5.0.0-alpha.4",
         "js-yaml": "^3.12.0",
         "log": "^1.4.0",
-        "mkdirp": "^0.5.1"
+        "mkdirp": "^0.5.1",
+        "pg": "^7.6.1"
     },
     "description": "Orchestrator",
     "devDependencies": {

@@ -50,5 +50,5 @@ module.exports = {
     config: config,
     logger: logger,
     deep_clone: deep_clone,
-    docker_build: docker_build
+    docker_build: docker_build,
 }

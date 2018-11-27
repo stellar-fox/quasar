@@ -5,7 +5,6 @@ MAINTAINER Grzegorz Szadkowski <5392918+gszadkow@users.noreply.github.com>
 ENV SHAMBHALA_COMMIT d9c5c6c8acb23a8636ff108a37797889ef11bdbf
 
 ADD *.json /configs/
-#/shambhala/src/config/
 
 RUN set -e \
     && apk update \

@@ -12,9 +12,9 @@
 
 const
     gulp = require("gulp"),
-    docker_build = require("../lib/utils").docker_build,
-    config = require("../lib/utils").config,
-    logger = require("../lib/utils").logger,
+    docker_build = require("../../lib/utils").docker_build,
+    config = require("../../lib/utils").config,
+    logger = require("../../lib/utils").logger,
     child_process = require("child_process"),
     yaml = require("js-yaml"),
     mkdirp = require("mkdirp"),

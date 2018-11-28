@@ -12,7 +12,7 @@
 
 const
     gulp = require("gulp"),
-    docker_build = require("../lib/utils").docker_build
+    docker_build = require("../../lib/utils").docker_build
 
 
 

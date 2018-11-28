@@ -12,8 +12,8 @@
 
 const
     gulp = require("gulp"),
-    config = require("../lib/utils").config,
-    logger = require("../lib/utils").logger,
+    config = require("../../lib/utils").config,
+    logger = require("../../lib/utils").logger,
     child_process = require("child_process"),
     mkdirp = require("mkdirp"),
     yaml = require("js-yaml"),

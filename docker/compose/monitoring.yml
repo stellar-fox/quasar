@@ -1,5 +1,17 @@
 version: '3'
 services:
+  openvpn:
+    image: kylemanna/openvpn:2.4
+    container_name: edo_vpn
+    environment:
+      - DEBUG=1
+    ports:
+      - 1195:1194/udp
+    volumes:
+      - ${DATA_ROOT}/openvpn:/etc/openvpn
+    cap_add:
+      - NET_ADMIN
+
   pgadmin:
     container_name: fox_pgadmin
     image: dpage/pgadmin4:3.5
@@ -97,20 +109,24 @@ services:
     container_name: fox_nginx
     hostname: .${DOMAIN}
     environment:
-      - HOSTNAMES="grafana.${DOMAIN},pgadmin.${DOMAIN},chronograf.${DOMAIN},cygnus.${DOMAIN},${DOMAIN}"
+      - HOSTNAMES="grafana.${DOMAIN},pgadmin.${DOMAIN},chronograf.${DOMAIN},cygnus.${DOMAIN},${DOMAIN},shambhala-client.${DOMAIN},shambhala-server.${DOMAIN}"
     image: nginx:1.15.5-alpine
     ports:
+      - 443:443
       - 80:80
     volumes:
       - ${CONFIG_ROOT}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ${CONFIG_ROOT}/nginx/conf.d:/etc/nginx/conf.d:ro
       - ${SENSITIVE_CONFIG_ROOT}/cert:/etc/nginx/cert:ro
       - ${LOG_ROOT}/nginx:/var/log/nginx
+      - ${DATA_ROOT}/nginx:/data/www
     links:
       - pgadmin
-      - chronograf
+      - chronograf 
 #      - cygnus
       - grafana
+      - shambhala-client
+      - shambhala-server
 
   fluentd:
     container_name: fox_fluentd

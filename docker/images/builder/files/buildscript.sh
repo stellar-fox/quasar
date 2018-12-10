@@ -2,6 +2,7 @@
 WORKSPACE=`readlink -f $1`
 INPUT=$2
 OUTPUT=$3
+FUSION_APP_DOMAIN=$4
 
 if [ ! -d "$WORKSPACE" ]; then
    echo "No valid workspace $WORKSPACE path provided"
@@ -30,7 +31,9 @@ cd $WORKSPACE/$OUTPUT
 echo "Adding cordova android plugin"
 cordova platform add android
 cordova plugin add cordova-plugin-httpd
-cordova plugin add cordova-plugin-inappbrowser
+#cordova plugin add cordova-plugin-inappbrowser
+cordova plugin add cordova-plugin-zeroconf
+cordova plugin add cordova-plugin-inappbrowser-popup-bridge
 rm -rf $WORKSPACE/$OUTPUT/www/*
 cp -R $WORKSPACE/$INPUT/build $WORKSPACE/$OUTPUT/www/htdocs
 rsvg-convert $WORKSPACE/$OUTPUT/www/htdocs/static/media/logo.b82958dc.svg > $WORKSPACE/$OUTPUT/www/htdocs/static/media/logo.b82958dc.png
@@ -42,5 +45,7 @@ rsvg-convert -w 96 -h 96 $WORKSPACE/$OUTPUT/www/htdocs/static/media/logo.b82958d
 find $WORKSPACE/$OUTPUT/www/htdocs -type f | xargs -I{} sed -i 's/logo.b82958dc.svg/logo.b82958dc.png/g' {}
 cp $WORKSPACE/quasar/docker/images/builder/files/index.html $WORKSPACE/$OUTPUT/www/.
 cp $WORKSPACE/quasar/docker/images/builder/files/bootstrap.js $WORKSPACE/$OUTPUT/www/.
+sed -i "s/FUSION_APP_DOMAIN/$FUSION_APP_DOMAIN/g" $WORKSPACE/$OUTPUT/www/bootstrap.js
+mv $WORKSPACE/$OUTPUT/config.xml $WORKSPACE/$OUTPUT/config.old.xml
 cp $WORKSPACE/quasar/docker/images/builder/files/config.xml $WORKSPACE/$OUTPUT/.
 cordova build

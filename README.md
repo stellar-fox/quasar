@@ -51,11 +51,24 @@ Builds the native application using cordova.
 ```bash
 $ cd docker/images/builder
 $ ./build.sh
+```
+
+### Build mobile fussion app
+```bash
+$ cd docker/images/builder
 $ ./run.sh workspace_path input_project output_project
 ```
 * workspace_path the parent directory where project to be wrapped is checked out  
 * input_project the project to be wrapped  
 * output_project the name of the project to be created as a wrapper  
+
+or
+```bash
+$ cd docker/images/builder
+./build_fusion.sh
+```
+
+on the same level as quasar, there need to be fusion and shambhala prebuilt
 
 ## Stellar-Fox ecosystem
 ### Tree
@@ -78,6 +91,7 @@ Point, where your data partition for stellar-fox will be:
 echo "export STELLAR_HOME=$HOME/stellar-fox" >> ~/.bashrc
 echo "export HOSTNAME=hostname"
 echo "export DOMAIN=${HOSTNAME}.fully.gualified.domain.name"
+echo "export FUSION_APP_DOMAIN=fusion-app.fully.gualified.domain.name"
 ```
 or if diskspace limited:
 ```bash

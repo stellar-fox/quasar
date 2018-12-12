@@ -123,7 +123,8 @@ const shambhala_config_show = (cb) => {
         a = child_process.execSync(cmd, {"env": config}).toString(),
         b = yaml.safeDump({
             "shambhala-db": yaml.safeLoad(a)["services"]["shambhala-db"],
-            "shambhala": yaml.safeLoad(a)["services"]["shambhala"],
+            "shambhala-client": yaml.safeLoad(a)["services"]["shambhala-client"],
+            "shambhala-server": yaml.safeLoad(a)["services"]["shambhala-server"],
         })
     console.log(b)
     cb()
